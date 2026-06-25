@@ -6,6 +6,7 @@ import type {
   Document,
   DocumentChatStats,
   TokenData,
+  UpgradeTierResponse,
   User,
 } from "@/types";
 import { API_URL, BACKEND_UNREACHABLE } from "@/lib/backend-health";
@@ -74,6 +75,36 @@ export async function loginUser(data: {
 
 export async function getMe(token: string): Promise<ApiResponse<User>> {
   return apiFetch<User>("/auth/me", {}, token);
+}
+
+export async function upgradeTier(
+  token: string,
+  tier: "pro" | "business"
+): Promise<UpgradeTierResponse> {
+  const res = await fetch(`${API_URL}/api/upgrade-tier`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ tier }),
+  });
+
+  const json = await res.json().catch(() => ({
+    success: false,
+    message: "Request failed",
+    userTier: "",
+  }));
+
+  if (!res.ok) {
+    return {
+      success: false,
+      message: json.detail || json.message || "Upgrade failed",
+      userTier: "",
+    };
+  }
+
+  return json as UpgradeTierResponse;
 }
 
 export async function updateProfile(

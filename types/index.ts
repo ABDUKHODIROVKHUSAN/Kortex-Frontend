@@ -33,6 +33,7 @@ export interface User {
   full_name: string;
   phone?: string | null;
   avatar_url?: string | null;
+  subscription_tier?: string;
 }
 
 export interface Document {
@@ -64,13 +65,21 @@ export interface ChatMessage {
 }
 
 export interface ChatUsage {
+  subscription_tier?: string;
   requests_used: number;
   requests_limit: number;
   requests_remaining: number;
   tokens_used: number;
   tokens_limit: number;
   tokens_remaining: number;
+  token_period?: string;
   resets_at: string;
+}
+
+export interface UpgradeTierResponse {
+  success: boolean;
+  message: string;
+  userTier: string;
 }
 
 export interface ApiResponse<T> {

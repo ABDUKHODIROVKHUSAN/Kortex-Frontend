@@ -62,6 +62,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
               accessToken: res.data.access_token,
 
+              subscriptionTier: u.subscription_tier ?? "free",
+
             };
 
           }
@@ -95,6 +97,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.accessToken = user.accessToken;
         token.id = user.id;
         token.phone = user.phone;
+        token.subscriptionTier = user.subscriptionTier ?? "free";
         const safe = avatarForToken(user.image);
         if (safe) token.picture = safe;
       }
@@ -111,6 +114,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         if (session.name) token.name = session.name;
         if (session.email) token.email = session.email;
         if ("phone" in session) token.phone = session.phone as string | undefined;
+        if ("subscriptionTier" in session && session.subscriptionTier) {
+          token.subscriptionTier = session.subscriptionTier as string;
+        }
         if ("avatarVersion" in session) {
           token.avatarVersion = session.avatarVersion as number;
         }
@@ -125,6 +131,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (session.user) {
         session.user.id = token.id as string;
         session.user.phone = token.phone as string | undefined;
+        session.user.subscriptionTier = (token.subscriptionTier as string) || "free";
         if (token.picture) session.user.image = token.picture as string;
         if (token.avatarVersion) {
           (session.user as { avatarVersion?: number }).avatarVersion =

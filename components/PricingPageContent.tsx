@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { useSession } from "next-auth/react";
+import PricingTierAction from "@/components/PricingTierAction";
 import { useTranslation } from "@/lib/i18n/context";
 import { getPricingTiers } from "@/lib/pricingTiers";
 import { GlassCard } from "@/components/ui";
@@ -37,18 +37,7 @@ export default function PricingPageContent() {
                 </li>
               ))}
             </ul>
-            {tier.disabled || tier.href === "#" ? (
-              <span className="site-header-signup mt-8 inline-flex cursor-not-allowed justify-center opacity-60">
-                {tier.cta}
-              </span>
-            ) : (
-              <Link
-                href={tier.href}
-                className="site-header-signup mt-8 inline-flex justify-center"
-              >
-                {tier.cta}
-              </Link>
-            )}
+            <PricingTierAction tier={tier} variant="page" />
           </GlassCard>
         ))}
       </div>

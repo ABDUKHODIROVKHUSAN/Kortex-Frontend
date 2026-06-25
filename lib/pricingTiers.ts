@@ -38,10 +38,10 @@ export function getPricingTiers(
       price: t("pricing.proPrice"),
       desc: t("pricing.proDesc"),
       features: [t("pricing.proF1"), t("pricing.proF2"), t("pricing.proF3")],
-      cta: signedIn ? t("pricing.ctaUpgrade") : t("pricing.comingSoon"),
+      cta: t("pricing.ctaUpgrade"),
       href: "#",
       highlight: true,
-      disabled: true,
+      disabled: false,
     },
     {
       id: "business",
@@ -54,10 +54,10 @@ export function getPricingTiers(
         t("pricing.businessF3"),
         t("pricing.businessF4"),
       ],
-      cta: signedIn ? t("pricing.ctaUpgrade") : t("pricing.comingSoon"),
+      cta: t("pricing.ctaUpgrade"),
       href: "#",
       highlight: false,
-      disabled: true,
+      disabled: false,
     },
   ];
 }

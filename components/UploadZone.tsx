@@ -1,20 +1,43 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useState } from "react";
+import { useSession } from "next-auth/react";
 import { Button, Spinner } from "@/components/ui";
 import { PdfFileIcon, DocxFileIcon } from "@/components/FileTypeIcons";
 import { useTranslation } from "@/lib/i18n/context";
+import { getFileExtension, getTierLimits, isFormatAllowed } from "@/lib/tiers";
 
 const ACCEPTED = [
   "application/pdf",
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "application/msword",
   "application/octet-stream",
 ];
 
-function isAllowedFile(file: File): boolean {
-  const ext = file.name.split(".").pop()?.toLowerCase();
-  if (ext === "pdf" || ext === "docx") return true;
-  return ACCEPTED.includes(file.type);
+function formatErrorMessage(
+  filename: string,
+  tier: string | null | undefined,
+  t: (key: string) => string
+): string {
+  const ext = getFileExtension(filename);
+  if (ext === "docx") return t("upload.docxUpgradeRequired");
+  if (ext === "doc") return t("upload.docUpgradeRequired");
+  if (!isFormatAllowed(tier, filename)) return t("upload.formatUpgradeRequired");
+  return t("upload.onlyPdfDocx");
+}
+
+function isAllowedFile(file: File, tier: string | null | undefined): boolean {
+  const ext = getFileExtension(file.name);
+  if (ext === "pdf" || ext === "docx" || ext === "doc") {
+    return isFormatAllowed(tier, file.name);
+  }
+  return ACCEPTED.includes(file.type) && isFormatAllowed(tier, file.name);
+}
+
+function acceptForTier(tier: string | null | undefined): string {
+  const formats = getTierLimits(tier).allowed_formats;
+  return formats.map((f) => `.${f}`).join(",");
 }
 
 interface UploadZoneProps {
@@ -23,16 +46,21 @@ interface UploadZoneProps {
 
 export default function UploadZone({ onUpload }: UploadZoneProps) {
   const { t } = useTranslation();
+  const { data: session } = useSession();
+  const tier = session?.user?.subscriptionTier;
   const [dragging, setDragging] = useState(false);
   const [error, setError] = useState("");
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [showUpgradeLink, setShowUpgradeLink] = useState(false);
 
   const validateAndUpload = useCallback(
     async (file: File) => {
       setError("");
-      if (!isAllowedFile(file)) {
-        setError(t("upload.onlyPdfDocx"));
+      setShowUpgradeLink(false);
+      if (!isAllowedFile(file, tier)) {
+        setError(formatErrorMessage(file.name, tier, t));
+        setShowUpgradeLink(true);
         return;
       }
       if (file.size > 50 * 1024 * 1024) {
@@ -50,7 +78,7 @@ export default function UploadZone({ onUpload }: UploadZoneProps) {
         setUploading(false);
       }
     },
-    [onUpload, t]
+    [onUpload, t, tier]
   );
 
   const onDrop = (e: React.DragEvent) => {
@@ -75,7 +103,7 @@ export default function UploadZone({ onUpload }: UploadZoneProps) {
       >
         <input
           type="file"
-          accept=".pdf,.docx"
+          accept={acceptForTier(tier)}
           className="absolute inset-0 cursor-pointer opacity-0"
           disabled={uploading}
           onChange={(e) => {
@@ -115,7 +143,14 @@ export default function UploadZone({ onUpload }: UploadZoneProps) {
       </div>
 
       {error && (
-        <p className="mt-4 text-center text-sm text-error">{error}</p>
+        <p className="mt-4 text-center text-sm text-error">
+          {error}{" "}
+          {showUpgradeLink && (
+            <Link href="/pricing" className="font-semibold text-accent-primary hover:underline">
+              {t("upload.upgradeLink")}
+            </Link>
+          )}
+        </p>
       )}
     </div>
   );
@@ -127,15 +162,20 @@ export function UploadZoneWithProgress({
   onUpload: (file: File, onProgress: (n: number) => void) => Promise<void>;
 }) {
   const { t } = useTranslation();
+  const { data: session } = useSession();
+  const tier = session?.user?.subscriptionTier;
   const [dragging, setDragging] = useState(false);
   const [error, setError] = useState("");
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [showUpgradeLink, setShowUpgradeLink] = useState(false);
 
   const handleUpload = async (file: File) => {
     setError("");
-    if (!isAllowedFile(file)) {
-      setError(t("upload.onlyPdfDocx"));
+    setShowUpgradeLink(false);
+    if (!isAllowedFile(file, tier)) {
+      setError(formatErrorMessage(file.name, tier, t));
+      setShowUpgradeLink(true);
       return;
     }
     if (file.size > 50 * 1024 * 1024) {
@@ -174,7 +214,7 @@ export function UploadZoneWithProgress({
       >
         <input
           type="file"
-          accept=".pdf,.docx"
+          accept={acceptForTier(tier)}
           className="absolute inset-0 cursor-pointer opacity-0"
           disabled={uploading}
           onChange={(e) => {
@@ -212,7 +252,16 @@ export function UploadZoneWithProgress({
           </>
         )}
       </div>
-      {error && <p className="mt-4 text-center text-sm text-error">{error}</p>}
+      {error && (
+        <p className="mt-4 text-center text-sm text-error">
+          {error}{" "}
+          {showUpgradeLink && (
+            <Link href="/pricing" className="font-semibold text-accent-primary hover:underline">
+              {t("upload.upgradeLink")}
+            </Link>
+          )}
+        </p>
+      )}
     </div>
   );
 }

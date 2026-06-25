@@ -2,16 +2,18 @@
 
 import Link from "next/link";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useState } from "react";
 import AuthLayout from "@/components/auth/AuthLayout";
 import PasswordInput from "@/components/auth/PasswordInput";
 import { registerUser } from "@/lib/api";
-import { Button, Input } from "@/components/ui";
+import { Button, Input, Spinner } from "@/components/ui";
 import { useTranslation } from "@/lib/i18n/context";
 
-export default function RegisterPage() {
+function RegisterForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const returnTo = searchParams.get("returnTo");
   const { t } = useTranslation();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -38,7 +40,7 @@ export default function RegisterPage() {
         return;
       }
 
-      router.push("/");
+      router.push(returnTo && returnTo.startsWith("/") ? returnTo : "/");
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : t("auth.registrationFailed"));
@@ -106,5 +108,19 @@ export default function RegisterPage() {
         </Button>
       </form>
     </AuthLayout>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center">
+          <Spinner className="h-8 w-8" />
+        </div>
+      }
+    >
+      <RegisterForm />
+    </Suspense>
   );
 }

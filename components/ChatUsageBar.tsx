@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useTranslation } from "@/lib/i18n/context";
 import type { ChatUsage } from "@/types";
 
@@ -15,6 +16,7 @@ export default function ChatUsageBar({ usage }: { usage: ChatUsage | null }) {
 
   const reqPct = pct(usage.requests_used, usage.requests_limit);
   const lowRequests = usage.requests_remaining <= 5;
+  const period = usage.token_period === "week" ? t("chat.week") : t("chat.month");
 
   return (
     <div className="chat-usage-bar shrink-0 px-4 py-2.5">
@@ -39,8 +41,17 @@ export default function ChatUsageBar({ usage }: { usage: ChatUsage | null }) {
         {t("chat.tokensRemaining", {
           remaining: usage.tokens_remaining.toLocaleString(),
           limit: usage.tokens_limit.toLocaleString(),
+          period,
         })}
       </p>
+      {usage.requests_remaining <= 0 && (
+        <p className="mt-2 text-xs text-warning">
+          {t("chat.monthlyLimitReached")}{" "}
+          <Link href="/pricing" className="font-semibold text-accent-primary hover:underline">
+            {t("chat.upgradeNow")}
+          </Link>
+        </p>
+      )}
     </div>
   );
 }

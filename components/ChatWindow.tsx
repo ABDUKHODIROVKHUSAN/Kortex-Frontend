@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import type { ChatMessage, SourceChunk } from "@/types";
@@ -158,9 +159,15 @@ export default function ChatWindow({ docId }: { docId: string }) {
       </div>
 
       {streamError && (
-        <p className="shrink-0 border-t border-error/20 bg-error/5 px-4 py-2 text-sm text-error">
-          {streamError}
-        </p>
+        <div className="shrink-0 border-t border-error/20 bg-error/5 px-4 py-2 text-sm text-error">
+          <p>{streamError}</p>
+          {(streamError.includes("monthly question limit") ||
+            streamError.includes("Upgrade to Pro")) && (
+            <Link href="/pricing" className="mt-1 inline-block font-semibold text-accent-primary hover:underline">
+              {t("chat.upgradeNow")}
+            </Link>
+          )}
+        </div>
       )}
 
       <div className="chat-composer shrink-0 p-4">

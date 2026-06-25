@@ -133,6 +133,7 @@ export default function ProfilePageContent() {
   const displayPhone = editing ? form.phone : profile?.phone || session?.user?.phone || "";
   const avatar = editing ? form.avatar_url : profile?.avatar_url || session?.user?.image || null;
   const userId = profile?.id || session?.user?.id || "";
+  const subscriptionTier = profile?.subscription_tier || session?.user?.subscriptionTier || "free";
   const initial = displayName[0]?.toUpperCase() || "U";
 
   const quickActions = [
@@ -427,7 +428,15 @@ export default function ProfilePageContent() {
             <div className="flex items-center justify-between gap-4">
               <dt className="text-text-muted">{t("profile.plan")}</dt>
               <dd className="flex items-center gap-2">
-                <span className="text-accent-primary">{t("profile.free")}</span>
+                <span className="text-accent-primary">
+                  {t(
+                    subscriptionTier === "pro"
+                      ? "profile.pro"
+                      : subscriptionTier === "business"
+                        ? "profile.business"
+                        : "profile.free"
+                  )}
+                </span>
                 <Link
                   href="/pricing"
                   className="text-xs text-text-secondary transition hover:text-accent-primary"

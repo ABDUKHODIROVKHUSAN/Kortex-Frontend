@@ -8,7 +8,8 @@ import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import HeroCTA from "@/components/HeroCTA";
 import LandingFAQ from "@/components/LandingFAQ";
-import { getPricingTiers } from "@/lib/pricingTiers";
+import PricingTierAction from "@/components/PricingTierAction";
+import { getPricingTiers, type PricingTier } from "@/lib/pricingTiers";
 import { useTranslation } from "@/lib/i18n/context";
 import { smoothScrollTo } from "@/lib/scroll";
 
@@ -33,36 +34,20 @@ function LandingFeatureCard({
   );
 }
 
-function PricingTierCard({
-  name,
-  price,
-  desc,
-  features,
-  cta,
-  href,
-  highlight,
-  disabled,
-}: {
-  name: string;
-  price: string;
-  desc: string;
-  features: string[];
-  cta: string;
-  href: string;
-  highlight?: boolean;
-  disabled?: boolean;
-}) {
-  const ctaClass = highlight
+function PricingTierCard({ tier }: { tier: PricingTier }) {
+  const ctaClass = tier.highlight
     ? "landing-pricing-cta landing-pricing-cta-primary"
     : "landing-pricing-cta landing-pricing-cta-outline";
 
-  const content = (
-    <>
-      <p className="landing-pricing-name">{name}</p>
-      <p className="landing-pricing-price">{price}</p>
-      <p className="landing-pricing-desc">{desc}</p>
-      <ul className="landing-pricing-features">
-        {features.map((f) => (
+  return (
+    <div
+      className={`landing-pricing-card flex flex-col ${tier.highlight ? "landing-pricing-card-highlight" : ""}`}
+    >
+      <p className="landing-pricing-name">{tier.name}</p>
+      <p className="landing-pricing-price">{tier.price}</p>
+      <p className="landing-pricing-desc">{tier.desc}</p>
+      <ul className="landing-pricing-features flex-1">
+        {tier.features.map((f) => (
           <li key={f}>
             <span className="landing-pricing-check" aria-hidden>
               ✓
@@ -71,27 +56,8 @@ function PricingTierCard({
           </li>
         ))}
       </ul>
-      <span className={`${ctaClass} ${disabled ? "landing-pricing-cta-disabled" : ""}`}>
-        {cta}
-      </span>
-    </>
-  );
-
-  if (disabled || href === "#") {
-    return (
-      <div className={`landing-pricing-card ${highlight ? "landing-pricing-card-highlight" : ""}`}>
-        {content}
-      </div>
-    );
-  }
-
-  return (
-    <Link
-      href={href}
-      className={`landing-pricing-card no-underline ${highlight ? "landing-pricing-card-highlight" : ""}`}
-    >
-      {content}
-    </Link>
+      <PricingTierAction tier={tier} variant="landing" className={ctaClass} />
+    </div>
   );
 }
 
@@ -176,7 +142,7 @@ export default function LandingPage() {
           </h2>
           <div className="grid items-stretch gap-6 md:grid-cols-3">
             {pricingTiers.map((tier) => (
-              <PricingTierCard key={tier.id} {...tier} />
+              <PricingTierCard key={tier.id} tier={tier} />
             ))}
           </div>
         </div>
