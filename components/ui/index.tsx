@@ -21,11 +21,11 @@ export function Button({
 }) {
   const variants = {
     primary:
-      "btn-primary border border-accent-primary/40 shadow-glow-btn hover:border-accent-primary/60 hover:shadow-glow-btn-hover",
+      "btn-primary border border-accent-primary shadow-glow-btn hover:border-accent-secondary hover:shadow-glow-btn-hover",
     secondary:
-      "btn-secondary-themed border border-border bg-bg-tertiary/80 text-text-primary hover:border-accent-primary/30 hover:text-accent-primary",
+      "btn-secondary-themed border border-border text-text-primary",
     ghost:
-      "text-text-secondary hover:bg-bg-tertiary/60 hover:text-accent-primary",
+      "text-text-secondary hover:bg-bg-tertiary hover:text-accent-primary",
   };
 
   return (
@@ -59,7 +59,7 @@ export function Badge({
 }) {
   const colors = {
     default: "bg-accent-primary/10 text-accent-primary border border-accent-primary/20",
-    success: "bg-accent-primary/10 text-accent-primary border border-accent-primary/20",
+    success: "bg-success/10 text-success border border-success/20",
     warning: "bg-warning/10 text-warning border border-warning/20",
     error: "bg-error/10 text-error border border-error/20",
   };

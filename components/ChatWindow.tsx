@@ -163,7 +163,7 @@ export default function ChatWindow({ docId }: { docId: string }) {
           <p>{streamError}</p>
           {(streamError.includes("monthly question limit") ||
             streamError.includes("Upgrade to Pro")) && (
-            <Link href="/pricing" className="mt-1 inline-block font-semibold text-accent-primary hover:underline">
+            <Link href="/#pricing" className="mt-1 inline-block font-semibold text-accent-primary hover:underline">
               {t("chat.upgradeNow")}
             </Link>
           )}

@@ -3,9 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { GlassCard } from "@/components/ui";
-import ThemeSwitcher from "@/components/ThemeSwitcher";
-import LanguageSwitcher from "@/components/LanguageSwitcher";
 import SignOutButton from "@/components/SignOutButton";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { loadRagSettings, saveRagSettings } from "@/lib/workspaceSettings";
 import { useTranslation } from "@/lib/i18n/context";
 import type { RagSettings } from "@/types";
@@ -48,14 +47,6 @@ export default function SettingsView() {
           >
             {t("workspace.manageProfile")} →
           </Link>
-        </GlassCard>
-
-        <GlassCard>
-          <h2 className="mb-1 text-sm font-bold uppercase tracking-wider text-text-secondary">
-            {t("workspace.appearance")}
-          </h2>
-          <p className="mb-4 text-sm text-text-muted">{t("workspace.appearanceDesc")}</p>
-          <ThemeSwitcher />
         </GlassCard>
 
         <GlassCard>

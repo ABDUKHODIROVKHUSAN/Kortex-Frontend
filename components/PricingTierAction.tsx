@@ -4,8 +4,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
+import PaymentDetailsDialog from "@/components/PaymentDetailsDialog";
 import SignUpToUpgradeDialog from "@/components/SignUpToUpgradeDialog";
-import UpgradeConfirmDialog from "@/components/UpgradeConfirmDialog";
 import { useToast } from "@/components/ToastProvider";
 import { upgradeTier } from "@/lib/api";
 import type { PricingTier } from "@/lib/pricingTiers";
@@ -27,7 +27,7 @@ export default function PricingTierAction({
   const { data: session, update } = useSession();
   const { showToast } = useToast();
   const [signUpOpen, setSignUpOpen] = useState(false);
-  const [upgradeOpen, setUpgradeOpen] = useState(false);
+  const [paymentOpen, setPaymentOpen] = useState(false);
   const [upgrading, setUpgrading] = useState(false);
 
   const signedIn = !!session;
@@ -50,10 +50,10 @@ export default function PricingTierAction({
       setSignUpOpen(true);
       return;
     }
-    setUpgradeOpen(true);
+    setPaymentOpen(true);
   };
 
-  const handleConfirmUpgrade = async () => {
+  const handleConfirmPayment = async () => {
     if (!session?.accessToken || tier.id === "free") return;
 
     setUpgrading(true);
@@ -64,17 +64,15 @@ export default function PricingTierAction({
       }
 
       await update({ subscriptionTier: res.userTier });
-      setUpgradeOpen(false);
-      showToast(
-        t("pricing.upgradeSuccess", { plan: tier.name }),
-        "success"
-      );
+      setPaymentOpen(false);
+      showToast(t("pricing.upgradeSuccess", { plan: tier.name }), "success");
       setTimeout(() => router.push("/dashboard"), 2500);
     } catch (err) {
       showToast(
         err instanceof Error ? err.message : t("pricing.upgradeFailed"),
         "error"
       );
+      throw err;
     } finally {
       setUpgrading(false);
     }
@@ -83,13 +81,13 @@ export default function PricingTierAction({
   if (isFree) {
     if (signedIn) {
       return (
-        <button type="button" className={`${baseClass} mt-8 ${className}`} onClick={handleFreeClick}>
+        <button type="button" className={`${baseClass} ${className}`} onClick={handleFreeClick}>
           {tier.cta}
         </button>
       );
     }
     return (
-      <Link href={tier.href} className={`${baseClass} mt-8 ${className}`}>
+      <Link href={tier.href} className={`${baseClass} ${className}`}>
         {tier.cta}
       </Link>
     );
@@ -100,19 +98,20 @@ export default function PricingTierAction({
       <>
         <button
           type="button"
-          className={`${baseClass} mt-8 ${className}`}
+          className={`${baseClass} ${className}`}
           onClick={handleUpgradeClick}
         >
           {tier.cta}
         </button>
         <SignUpToUpgradeDialog open={signUpOpen} onClose={() => setSignUpOpen(false)} />
-        <UpgradeConfirmDialog
-          open={upgradeOpen}
+        <PaymentDetailsDialog
+          open={paymentOpen}
           tierName={tier.name}
-          features={tier.features}
+          priceLabel={tier.priceLabel}
+          periodLabel={tier.periodLabel}
           loading={upgrading}
-          onConfirm={handleConfirmUpgrade}
-          onCancel={() => !upgrading && setUpgradeOpen(false)}
+          onConfirm={handleConfirmPayment}
+          onCancel={() => !upgrading && setPaymentOpen(false)}
         />
       </>
     );

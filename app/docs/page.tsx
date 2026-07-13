@@ -1,10 +1,16 @@
-import PublicPageShell from "@/components/PublicPageShell";
-import DocsPageContent from "@/components/DocsPageContent";
+"use client";
 
-export default function DocsPage() {
+import { useEffect } from "react";
+
+/** Legacy route — redirects to the landing docs section. */
+export default function DocsRedirectPage() {
+  useEffect(() => {
+    window.location.replace("/#docs");
+  }, []);
+
   return (
-    <PublicPageShell>
-      <DocsPageContent />
-    </PublicPageShell>
+    <div className="flex min-h-[40vh] items-center justify-center text-sm text-text-secondary">
+      Redirecting to docs…
+    </div>
   );
 }

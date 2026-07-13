@@ -1,5 +1,6 @@
 import type {
   ApiResponse,
+  AnalyticsSummary,
   ChatMessage,
   ChatSessionSummary,
   ChatUsage,
@@ -217,6 +218,10 @@ export async function clearChatHistory(
   docId: string
 ): Promise<ApiResponse<null>> {
   return apiFetch<null>(`/chat/history/${docId}`, { method: "DELETE" }, token);
+}
+
+export async function getAnalyticsSummary(): Promise<ApiResponse<AnalyticsSummary>> {
+  return apiFetch<AnalyticsSummary>("/api/analytics/summary");
 }
 
 export async function streamChat(

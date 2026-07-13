@@ -7,7 +7,6 @@ import { useSession } from "next-auth/react";
 import { GlassCard, Button, Spinner, Badge, Input } from "@/components/ui";
 import { KortexLogo } from "@/components/KortexLogo";
 import SignOutButton from "@/components/SignOutButton";
-import ThemeSwitcher from "@/components/ThemeSwitcher";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import {
   ProfileChunksIcon,
@@ -272,7 +271,7 @@ export default function ProfilePageContent() {
           <div className="min-w-0 flex-1">
             <div className="mb-2 flex flex-wrap items-center gap-2">
               <h1 className="text-2xl font-bold text-text-primary">{displayName}</h1>
-              <Link href="/pricing">
+              <Link href="/#pricing">
                 <Badge color="success">{t("profile.free")}</Badge>
               </Link>
             </div>
@@ -327,10 +326,6 @@ export default function ProfilePageContent() {
         </h2>
         <p className="mb-5 text-sm text-text-muted">{t("profile.preferencesDesc")}</p>
         <div className="space-y-5">
-          <div>
-            <p className="mb-2 text-xs text-text-muted">{t("profile.theme")}</p>
-            <ThemeSwitcher />
-          </div>
           <div>
             <p className="mb-2 text-xs text-text-muted">{t("profile.language")}</p>
             <LanguageSwitcher fullWidth />
@@ -438,7 +433,7 @@ export default function ProfilePageContent() {
                   )}
                 </span>
                 <Link
-                  href="/pricing"
+                  href="/#pricing"
                   className="text-xs text-text-secondary transition hover:text-accent-primary"
                 >
                   {t("profile.upgradePlan")} →

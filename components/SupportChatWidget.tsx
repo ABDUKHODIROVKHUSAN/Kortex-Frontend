@@ -9,7 +9,7 @@ import {
   type SupportChatOutbound,
 } from "@/lib/support-chat-ws";
 
-const SUPPORT_CHAT_PATHS = ["/", "/pricing", "/docs"];
+const SUPPORT_CHAT_PATHS = ["/"];
 
 type ChatMessage = {
   id: string;
@@ -22,7 +22,7 @@ function newId() {
 }
 
 export default function SupportChatWidget() {
-  const pathname = usePathname();
+  const pathname = usePathname() ?? "";
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");

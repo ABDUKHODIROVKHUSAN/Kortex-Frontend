@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui";
 import { useTranslation } from "@/lib/i18n/context";
@@ -13,23 +14,33 @@ interface SignUpToUpgradeDialogProps {
 export default function SignUpToUpgradeDialog({ open, onClose }: SignUpToUpgradeDialogProps) {
   const { t } = useTranslation();
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (!open) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener("keydown", onKey);
+    };
   }, [open, onClose]);
 
-  if (!open) return null;
+  if (!open || !mounted) return null;
 
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+  return createPortal(
+    <div className="payment-modal-root" role="presentation">
       <button
         type="button"
-        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+        className="payment-modal-backdrop"
         onClick={onClose}
         aria-label="Close"
       />
@@ -37,7 +48,7 @@ export default function SignUpToUpgradeDialog({ open, onClose }: SignUpToUpgrade
         role="dialog"
         aria-modal="true"
         aria-labelledby="signup-upgrade-title"
-        className="glass-card relative z-10 w-full max-w-md p-6 shadow-glow-lg"
+        className="payment-modal-panel"
       >
         <h2 id="signup-upgrade-title" className="text-lg font-semibold text-text-primary">
           {t("pricing.signUpToUpgradeTitle")}
@@ -53,13 +64,14 @@ export default function SignUpToUpgradeDialog({ open, onClose }: SignUpToUpgrade
             className="flex-1"
             onClick={() => {
               onClose();
-              router.push("/register?returnTo=/pricing");
+              router.push("/register?returnTo=/#pricing");
             }}
           >
             {t("pricing.goToSignUp")}
           </Button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

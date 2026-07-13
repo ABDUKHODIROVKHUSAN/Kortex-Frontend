@@ -82,6 +82,16 @@ export interface UpgradeTierResponse {
   userTier: string;
 }
 
+export interface AnalyticsSummary {
+  total_users: number;
+  total_documents: number;
+  pdf_percentage: number;
+  docx_percentage: number;
+  free_users: number;
+  pro_users: number;
+  business_users: number;
+}
+
 export interface ApiResponse<T> {
   success: boolean;
   data: T;

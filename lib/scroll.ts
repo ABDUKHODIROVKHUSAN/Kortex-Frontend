@@ -3,6 +3,12 @@ export function smoothScrollTo(hash: string) {
   const el = document.getElementById(id);
   if (el) {
     el.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (typeof window !== "undefined" && id) {
+      const next = `#${id}`;
+      if (window.location.hash !== next) {
+        window.history.replaceState(null, "", next);
+      }
+    }
   }
 }
 
@@ -11,12 +17,12 @@ export function handleAnchorClick(
   pathname: string,
   anchor: string
 ) {
-  const href = pathname === "/" ? anchor : `/${anchor}`;
+  const normalized = anchor.startsWith("#") ? anchor : `#${anchor}`;
   if (pathname === "/") {
     e.preventDefault();
-    smoothScrollTo(anchor);
-  } else if (href.startsWith("/#")) {
+    smoothScrollTo(normalized);
+  } else {
     e.preventDefault();
-    window.location.href = href;
+    window.location.href = `/${normalized}`;
   }
 }

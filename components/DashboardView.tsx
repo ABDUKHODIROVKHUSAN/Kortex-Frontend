@@ -110,7 +110,7 @@ export default function DashboardView({
               }
             >
               {filtered.map((doc) => (
-                <div key={doc.id} className="min-w-0">
+                <div key={doc.id} className="min-w-0 overflow-visible">
                   <DocumentCard
                     document={doc}
                     chatStats={chatStatsMap[doc.id]}

@@ -146,7 +146,7 @@ export default function UploadZone({ onUpload }: UploadZoneProps) {
         <p className="mt-4 text-center text-sm text-error">
           {error}{" "}
           {showUpgradeLink && (
-            <Link href="/pricing" className="font-semibold text-accent-primary hover:underline">
+            <Link href="/#pricing" className="font-semibold text-accent-primary hover:underline">
               {t("upload.upgradeLink")}
             </Link>
           )}
@@ -256,7 +256,7 @@ export function UploadZoneWithProgress({
         <p className="mt-4 text-center text-sm text-error">
           {error}{" "}
           {showUpgradeLink && (
-            <Link href="/pricing" className="font-semibold text-accent-primary hover:underline">
+            <Link href="/#pricing" className="font-semibold text-accent-primary hover:underline">
               {t("upload.upgradeLink")}
             </Link>
           )}

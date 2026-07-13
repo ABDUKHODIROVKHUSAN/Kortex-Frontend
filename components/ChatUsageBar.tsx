@@ -47,7 +47,7 @@ export default function ChatUsageBar({ usage }: { usage: ChatUsage | null }) {
       {usage.requests_remaining <= 0 && (
         <p className="mt-2 text-xs text-warning">
           {t("chat.monthlyLimitReached")}{" "}
-          <Link href="/pricing" className="font-semibold text-accent-primary hover:underline">
+          <Link href="/#pricing" className="font-semibold text-accent-primary hover:underline">
             {t("chat.upgradeNow")}
           </Link>
         </p>

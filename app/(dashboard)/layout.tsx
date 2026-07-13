@@ -19,9 +19,7 @@ export default async function DashboardLayout({
       <PageBackground />
       <div className="relative z-10 flex flex-1 flex-col">
         <BackendStatusBanner />
-        <div className="mx-auto w-full max-w-6xl shrink-0 px-6 pt-6">
-          <SiteHeader />
-        </div>
+        <SiteHeader />
         <WorkspaceLayoutChrome>
           <main className="flex flex-1 flex-col">{children}</main>
         </WorkspaceLayoutChrome>

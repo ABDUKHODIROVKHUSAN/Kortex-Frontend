@@ -1,14 +1,14 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { KortexLogo } from "@/components/KortexLogo";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
-import ThemeSwitcher from "@/components/ThemeSwitcher";
-import { AskNavIcon, WorkspaceNavIcon } from "@/components/NavIcons";
+import UserAvatarMenu from "@/components/UserAvatarMenu";
+import { WorkspaceNavIcon } from "@/components/NavIcons";
 import { useTranslation } from "@/lib/i18n/context";
-import { useUserAvatar } from "@/lib/useUserAvatar";
 import { handleAnchorClick } from "@/lib/scroll";
 
 function isWorkspaceRoute(pathname: string) {
@@ -21,18 +21,25 @@ function isWorkspaceRoute(pathname: string) {
 }
 
 export default function SiteHeader() {
-  const pathname = usePathname();
+  const pathname = usePathname() || "/";
   const { data: session } = useSession();
   const { t } = useTranslation();
-  const avatar = useUserAvatar();
-  const initial = session?.user?.name?.[0]?.toUpperCase() || "U";
+  const [hash, setHash] = useState("");
 
-  const askActive = pathname === "/";
+  useEffect(() => {
+    const syncHash = () => setHash(window.location.hash);
+    syncHash();
+    window.addEventListener("hashchange", syncHash);
+    return () => window.removeEventListener("hashchange", syncHash);
+  }, [pathname]);
+
+  const onHome = pathname === "/";
+  const featuresActive = onHome && hash === "#features";
   const workspaceActive = isWorkspaceRoute(pathname);
-  const pricingActive = pathname === "/pricing";
-  const docsActive = pathname === "/docs";
+  const pricingActive = onHome && hash === "#pricing";
+  const docsActive = onHome && hash === "#docs";
 
-  const workspaceHref = session ? "/dashboard" : "/login?callbackUrl=/dashboard";
+  const workspaceHref = session ? "/dashboard" : "/#features";
 
   const navLinkClass = (active: boolean) =>
     `site-header-nav-link flex items-center gap-2 text-sm font-bold transition ${
@@ -42,63 +49,91 @@ export default function SiteHeader() {
     }`;
 
   return (
-    <header className="site-header flex items-center justify-between gap-6 py-4">
-      <div className="flex min-w-0 flex-1 items-center gap-8 lg:gap-10">
-        <Link href="/" className="shrink-0">
-          <KortexLogo />
-        </Link>
+    <header className="site-header">
+      <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-6 px-6 py-4">
+        <div className="flex min-w-0 flex-1 items-center gap-8 lg:gap-10">
+          <Link href="/" className="shrink-0">
+            <KortexLogo />
+          </Link>
 
-        <nav className="hidden items-center gap-7 md:flex lg:gap-8">
-          <Link
-            href="/#faq"
-            onClick={(e) => handleAnchorClick(e, pathname, "#faq")}
-            className={navLinkClass(askActive)}
-          >
-            <AskNavIcon />
-            {t("nav.ask")}
-          </Link>
-          <Link href={workspaceHref} className={navLinkClass(workspaceActive)}>
-            <WorkspaceNavIcon />
-            {t("nav.workspace")}
-          </Link>
-          <Link href="/pricing" className={navLinkClass(pricingActive)}>
-            {t("nav.pricing")}
-          </Link>
-          <Link href="/docs" className={navLinkClass(docsActive)}>
-            {t("nav.docs")}
-          </Link>
-        </nav>
-      </div>
-
-      <div className="flex shrink-0 items-center gap-2 sm:gap-3">
-        <ThemeSwitcher compact utility />
-        <LanguageSwitcher utility />
-        {session ? (
-          <Link
-            href="/profile"
-            className="site-header-avatar ml-1 flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-accent-primary/30 bg-accent-primary/10 text-xs font-semibold text-accent-primary transition hover:border-accent-primary/50 hover:shadow-glow"
-            title={t("nav.profile")}
-          >
-            {avatar ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={avatar} alt="" className="h-full w-full object-cover" />
-            ) : (
-              initial
-            )}
-          </Link>
-        ) : (
-          <>
+          <nav className="hidden items-center gap-7 md:flex lg:gap-8">
             <Link
-              href="/login"
-              className="site-header-login hidden text-sm font-bold text-text-primary transition hover:text-accent-primary sm:inline"
+              href="/#features"
+              onClick={(e) => {
+                handleAnchorClick(e, pathname, "#features");
+                setHash("#features");
+              }}
+              className={navLinkClass(featuresActive)}
             >
-              {t("nav.logIn")}
+              {t("nav.features")}
             </Link>
-            <Link href="/register" className="site-header-signup">
-              {t("nav.signUp")}
+            <Link
+              href={workspaceHref}
+              onClick={(e) => {
+                if (session) return;
+                handleAnchorClick(e, pathname, "#features");
+                setHash("#features");
+              }}
+              className={`site-header-workspace inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-sm font-bold transition ${
+                workspaceActive
+                  ? "border-accent-primary bg-accent-primary text-white shadow-glow-btn"
+                  : "border-accent-primary/30 bg-accent-primary/10 text-accent-primary hover:border-accent-primary/50 hover:bg-accent-primary/15"
+              }`}
+            >
+              <WorkspaceNavIcon />
+              {t("nav.workspace")}
             </Link>
-          </>
-        )}
+            <Link
+              href="/#pricing"
+              onClick={(e) => {
+                handleAnchorClick(e, pathname, "#pricing");
+                setHash("#pricing");
+              }}
+              className={navLinkClass(pricingActive)}
+            >
+              {t("nav.pricing")}
+            </Link>
+            <Link
+              href="/#analytics"
+              onClick={(e) => {
+                handleAnchorClick(e, pathname, "#analytics");
+                setHash("#analytics");
+              }}
+              className={navLinkClass(onHome && hash === "#analytics")}
+            >
+              {t("nav.analytics")}
+            </Link>
+            <Link
+              href="/#docs"
+              onClick={(e) => {
+                handleAnchorClick(e, pathname, "#docs");
+                setHash("#docs");
+              }}
+              className={navLinkClass(docsActive)}
+            >
+              {t("nav.docs")}
+            </Link>
+          </nav>
+        </div>
+
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+          <LanguageSwitcher utility />
+          {session ? (
+            <UserAvatarMenu />
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className="site-header-login hidden text-sm font-bold text-text-primary transition hover:text-accent-primary sm:inline"
+              >
+                {t("nav.logIn")}
+              </Link>
+              <Link href="/register" className="site-header-signup">
+                {t("nav.signUp")}
+              </Link>
+            </>
+          )}
+        </div>
       </div>
     </header>
   );

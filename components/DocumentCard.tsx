@@ -107,16 +107,21 @@ export default function DocumentCard({
   return (
     <>
       <GlassCard
-        className={`group relative flex h-full flex-col transition hover:border-accent-primary/25 hover:shadow-glow-lg ${
+        className={`document-card group relative flex h-full flex-col overflow-visible transition hover:border-accent-primary/25 hover:shadow-glow-lg ${
           vanishing ? "scale-95 opacity-0 duration-400" : "opacity-100 duration-300"
         }`}
       >
-        <div ref={menuRef} className="absolute right-3 top-3 z-10">
+        <div ref={menuRef} className="absolute right-3 top-3 z-30">
           <button
             type="button"
             onClick={() => setMenuOpen((v) => !v)}
-            className="flex h-8 w-8 items-center justify-center rounded-lg border border-border/80 bg-bg-secondary/80 text-text-secondary transition hover:border-accent-primary/30 hover:text-accent-primary"
+            className={`document-card-menu-trigger flex h-8 w-8 items-center justify-center rounded-lg border text-text-secondary transition hover:border-accent-primary/30 hover:text-accent-primary ${
+              menuOpen
+                ? "border-accent-primary/40 bg-bg-tertiary text-accent-primary"
+                : "border-border/80 bg-bg-secondary/90"
+            }`}
             aria-label={t("dashboard.documentMenu")}
+            aria-expanded={menuOpen}
           >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden>
               <circle cx="8" cy="3" r="1.25" />
@@ -125,7 +130,7 @@ export default function DocumentCard({
             </svg>
           </button>
           {menuOpen && (
-            <div className="header-dropdown-panel absolute right-0 top-[calc(100%+4px)] z-20 min-w-[140px] overflow-hidden rounded-xl border p-1 shadow-glow">
+            <div className="document-card-menu-panel absolute right-0 bottom-[calc(100%+6px)] z-50 min-w-[148px] overflow-hidden rounded-xl border p-1 shadow-glow-lg">
               <button
                 type="button"
                 className="flex w-full rounded-lg px-3 py-2 text-left text-xs text-text-secondary transition hover:bg-bg-tertiary/80 hover:text-text-primary"
