@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { KortexLogo } from "@/components/KortexLogo";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
@@ -22,9 +22,15 @@ function isWorkspaceRoute(pathname: string) {
 
 export default function SiteHeader() {
   const pathname = usePathname() || "/";
+  const router = useRouter();
   const { data: session } = useSession();
   const { t } = useTranslation();
   const [hash, setHash] = useState("");
+  const [workspacePrompt, setWorkspacePrompt] = useState<"hidden" | "visible" | "fading">(
+    "hidden"
+  );
+  const fadeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const syncHash = () => setHash(window.location.hash);
@@ -33,13 +39,48 @@ export default function SiteHeader() {
     return () => window.removeEventListener("hashchange", syncHash);
   }, [pathname]);
 
+  useEffect(() => {
+    return () => {
+      if (fadeTimer.current) clearTimeout(fadeTimer.current);
+      if (hideTimer.current) clearTimeout(hideTimer.current);
+    };
+  }, []);
+
+  const clearPromptTimers = () => {
+    if (fadeTimer.current) clearTimeout(fadeTimer.current);
+    if (hideTimer.current) clearTimeout(hideTimer.current);
+    fadeTimer.current = null;
+    hideTimer.current = null;
+  };
+
+  const showWorkspacePrompt = () => {
+    clearPromptTimers();
+    setWorkspacePrompt("visible");
+    fadeTimer.current = setTimeout(() => {
+      setWorkspacePrompt("fading");
+      hideTimer.current = setTimeout(() => {
+        setWorkspacePrompt("hidden");
+      }, 400);
+    }, 3000);
+  };
+
+  const handleWorkspaceClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (session) return;
+    e.preventDefault();
+    showWorkspacePrompt();
+  };
+
+  const handlePromptClick = () => {
+    clearPromptTimers();
+    setWorkspacePrompt("hidden");
+    router.push("/register");
+  };
+
   const onHome = pathname === "/";
   const featuresActive = onHome && hash === "#features";
   const workspaceActive = isWorkspaceRoute(pathname);
   const pricingActive = onHome && hash === "#pricing";
   const docsActive = onHome && hash === "#docs";
-
-  const workspaceHref = session ? "/dashboard" : "/#features";
 
   const navLinkClass = (active: boolean) =>
     `site-header-nav-link flex items-center gap-2 text-sm font-bold transition ${
@@ -67,22 +108,37 @@ export default function SiteHeader() {
             >
               {t("nav.features")}
             </Link>
-            <Link
-              href={workspaceHref}
-              onClick={(e) => {
-                if (session) return;
-                handleAnchorClick(e, pathname, "#features");
-                setHash("#features");
-              }}
-              className={`site-header-workspace inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-sm font-bold transition ${
-                workspaceActive
-                  ? "border-accent-primary bg-accent-primary text-white shadow-glow-btn"
-                  : "border-accent-primary/30 bg-accent-primary/10 text-accent-primary hover:border-accent-primary/50 hover:bg-accent-primary/15"
-              }`}
-            >
-              <WorkspaceNavIcon />
-              {t("nav.workspace")}
-            </Link>
+            <div className="relative">
+              <Link
+                href={session ? "/dashboard" : "/register"}
+                onClick={handleWorkspaceClick}
+                className={`site-header-workspace inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-sm font-bold transition ${
+                  workspaceActive
+                    ? "border-accent-primary bg-accent-primary text-white shadow-glow-btn"
+                    : "border-accent-primary/30 bg-accent-primary/10 text-accent-primary hover:border-accent-primary/50 hover:bg-accent-primary/15"
+                }`}
+              >
+                <WorkspaceNavIcon />
+                {t("nav.workspace")}
+              </Link>
+              {workspacePrompt !== "hidden" && (
+                <button
+                  type="button"
+                  onClick={handlePromptClick}
+                  className={`workspace-signin-bubble ${
+                    workspacePrompt === "fading" ? "is-fading" : ""
+                  }`}
+                >
+                  <span className="workspace-signin-bubble-pointer" aria-hidden />
+                  <p className="text-sm font-semibold text-text-primary">
+                    {t("nav.workspaceNotSignedIn")}
+                  </p>
+                  <p className="mt-1 text-xs text-text-secondary">
+                    {t("nav.workspaceSignUpPrompt")}
+                  </p>
+                </button>
+              )}
+            </div>
             <Link
               href="/#pricing"
               onClick={(e) => {
