@@ -249,6 +249,10 @@ const en: Messages = {
     featuresCta: "Open Workspace",
     docsTitle: "Documentation",
     docsSubtitle: "A quick overview of how to get the most out of Kortex.",
+    docsMobileTeaser:
+      "Learn how to upload documents, chat with citations, and get the most out of Kortex.",
+    viewDocs: "View full docs →",
+    viewFullPricing: "Compare all plans & billing FAQ →",
     f01Title: "Your Workspace, organized",
     f01Desc:
       "Manage documents in one place: My documents, Upload, History, and Settings. Open any ready file and start chatting instantly.",
@@ -462,6 +466,9 @@ const en: Messages = {
   },
   chat: {
     backToDocuments: "← Back to Documents",
+    backShort: "← Back",
+    documentInfo: "Info",
+    closeInfo: "Close document info",
     type: "Type",
     size: "Size",
     uploaded: "Uploaded",
@@ -469,6 +476,7 @@ const en: Messages = {
     notFound: "Document not found",
     emptyPrompt: "Ask anything about this document...",
     inputPlaceholder: "Ask a question... (Enter to send, Shift+Enter for newline)",
+    inputPlaceholderMobile: "Ask a question...",
     send: "Send",
     clearChat: "Clear chat",
     you: "You",
@@ -732,6 +740,10 @@ const ko: Messages = {
     featuresCta: "워크스페이스 열기",
     docsTitle: "문서",
     docsSubtitle: "Kortex를 최대한 활용하는 방법을 간단히 알아보세요.",
+    docsMobileTeaser:
+      "문서 업로드, 출처 인용 채팅, Kortex 활용법을 알아보세요.",
+    viewDocs: "전체 문서 보기 →",
+    viewFullPricing: "전체 요금제 · 결제 FAQ 보기 →",
     f01Title: "체계적인 Workspace",
     f01Desc:
       "내 문서, 업로드, 기록, 설정을 한곳에서 관리하세요. 준비된 파일을 열고 바로 대화를 시작할 수 있습니다.",
@@ -945,6 +957,9 @@ const ko: Messages = {
   },
   chat: {
     backToDocuments: "← 문서로 돌아가기",
+    backShort: "← 뒤로",
+    documentInfo: "정보",
+    closeInfo: "문서 정보 닫기",
     type: "유형",
     size: "크기",
     uploaded: "업로드됨",
@@ -952,6 +967,7 @@ const ko: Messages = {
     notFound: "문서를 찾을 수 없습니다",
     emptyPrompt: "이 문서에 대해 무엇이든 질문하세요...",
     inputPlaceholder: "질문 입력... (Enter: 전송, Shift+Enter: 줄바꿈)",
+    inputPlaceholderMobile: "질문 입력...",
     send: "전송",
     clearChat: "채팅 지우기",
     you: "나",
@@ -1215,6 +1231,10 @@ const uz: Messages = {
     featuresCta: "Ish maydonini ochish",
     docsTitle: "Hujjatlar",
     docsSubtitle: "Kortexdan maksimal foydalanish uchun qisqa ko'rsatmalar.",
+    docsMobileTeaser:
+      "Hujjat yuklash, manbali chat va Kortexdan to'liq foydalanishni o'rganing.",
+    viewDocs: "To'liq hujjatlarni ko'rish →",
+    viewFullPricing: "Barcha tariflar va to'lov FAQ →",
     f01Title: "Tartibli Workspace",
     f01Desc:
       "Hujjatlaringizni bir joyda boshqaring: Mening hujjatlarim, Yuklash, Tarix va Sozlamalar. Tayyor faylni ochib darhol suhbatni boshlang.",
@@ -1428,6 +1448,9 @@ const uz: Messages = {
   },
   chat: {
     backToDocuments: "← Hujjatlarga qaytish",
+    backShort: "← Orqaga",
+    documentInfo: "Ma'lumot",
+    closeInfo: "Hujjat ma'lumotini yopish",
     type: "Turi",
     size: "Hajmi",
     uploaded: "Yuklangan",
@@ -1435,6 +1458,7 @@ const uz: Messages = {
     notFound: "Hujjat topilmadi",
     emptyPrompt: "Bu hujjat haqida istalgan savol bering...",
     inputPlaceholder: "Savol bering... (Enter: yuborish, Shift+Enter: yangi qator)",
+    inputPlaceholderMobile: "Savol bering...",
     send: "Yuborish",
     clearChat: "Chatni tozalash",
     you: "Siz",
@@ -1698,6 +1722,10 @@ const ru: Messages = {
     featuresCta: "Открыть Workspace",
     docsTitle: "Документация",
     docsSubtitle: "Краткий обзор, как получить максимум от Kortex.",
+    docsMobileTeaser:
+      "Узнайте, как загружать документы, общаться с цитатами и эффективно использовать Kortex.",
+    viewDocs: "Открыть документацию →",
+    viewFullPricing: "Все тарифы и FAQ по оплате →",
     f01Title: "Упорядоченный Workspace",
     f01Desc:
       "Управляйте документами в одном месте: Мои документы, Загрузка, История и Настройки. Откройте готовый файл и сразу начните чат.",
@@ -1911,6 +1939,9 @@ const ru: Messages = {
   },
   chat: {
     backToDocuments: "← К документам",
+    backShort: "← Назад",
+    documentInfo: "Инфо",
+    closeInfo: "Закрыть сведения о документе",
     type: "Тип",
     size: "Размер",
     uploaded: "Загружен",
@@ -1918,6 +1949,7 @@ const ru: Messages = {
     notFound: "Документ не найден",
     emptyPrompt: "Спросите что угодно об этом документе...",
     inputPlaceholder: "Задайте вопрос... (Enter: отправить, Shift+Enter: новая строка)",
+    inputPlaceholderMobile: "Задайте вопрос...",
     send: "Отправить",
     clearChat: "Очистить чат",
     you: "Вы",

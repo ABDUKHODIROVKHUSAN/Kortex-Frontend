@@ -19,10 +19,10 @@ export default function ChatUsageBar({ usage }: { usage: ChatUsage | null }) {
   const period = usage.token_period === "week" ? t("chat.week") : t("chat.month");
 
   return (
-    <div className="chat-usage-bar shrink-0 px-4 py-2.5">
-      <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
+    <div className="chat-usage-bar shrink-0 border-b-0 px-3 py-2 sm:px-4 sm:py-2.5">
+      <div className="flex flex-wrap items-center justify-between gap-2 text-xs sm:gap-3">
         <span className="font-medium text-text-secondary">{t("chat.usageTitle")}</span>
-        <span className={lowRequests ? "text-warning" : "text-text-muted"}>
+        <span className={`text-right ${lowRequests ? "text-warning" : "text-text-muted"}`}>
           {t("chat.requestsRemaining", {
             remaining: usage.requests_remaining,
             limit: usage.requests_limit,

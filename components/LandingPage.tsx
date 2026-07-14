@@ -93,7 +93,7 @@ function PricingTierCard({ tier }: { tier: PricingTier }) {
         </p>
       )}
       <PricingTierAction tier={tier} variant="landing" className={ctaClass} />
-      <div className="landing-pricing-groups flex-1">
+      <div className="landing-pricing-groups hidden flex-1 md:block">
         {tier.featureGroups.map((group) => (
           <div key={group.title} className="landing-pricing-group">
             <p className="landing-pricing-group-title">{group.title}</p>
@@ -207,7 +207,7 @@ export default function LandingPage() {
 
   const pricingTiers = getPricingTiers(t, session, billing);
   const featuresCtaHref = session ? "/dashboard" : "/register";
-  const ctaHref = session ? "/upload" : "/register";
+  const ctaHref = session ? "/dashboard" : "/register";
 
   return (
     <GridBackground>
@@ -218,8 +218,8 @@ export default function LandingPage() {
         className="landing-band scroll-mt-24"
       >
         <div className="mx-auto flex w-full max-w-6xl flex-col px-6">
-          <div className="flex flex-col items-center justify-center py-16 text-center md:py-24">
-            <h1 className="landing-hero-title mb-6 max-w-4xl text-4xl font-bold text-text-primary md:text-6xl lg:text-7xl">
+          <div className="flex flex-col items-center justify-center py-10 text-center md:py-24">
+            <h1 className="landing-hero-title mb-4 max-w-4xl text-3xl font-bold text-text-primary sm:text-4xl md:mb-6 md:text-6xl lg:text-7xl">
               <span className="landing-hero-prefix text-accent-primary">
                 {t("hero.titlePrefix")}
               </span>
@@ -227,7 +227,7 @@ export default function LandingPage() {
               <br />
               <span className="landing-hero-line2">{t("hero.titleLine2")}</span>
             </h1>
-            <p className="mb-10 max-w-2xl text-base leading-relaxed text-text-secondary md:text-lg">
+            <p className="mb-6 max-w-2xl text-sm leading-relaxed text-text-secondary sm:text-base md:mb-10 md:text-lg">
               {t("hero.subtitle")}
             </p>
             <HeroCTA />
@@ -236,19 +236,19 @@ export default function LandingPage() {
       </section>
 
       <section id="features" className="landing-band landing-band-features scroll-mt-24">
-        <div className="mx-auto max-w-6xl px-6 py-20 md:py-24">
-          <h2 className="landing-section-title mb-3 md:mb-4">
+        <div className="mx-auto max-w-6xl px-6 py-10 md:py-24">
+          <h2 className="landing-section-title mb-2 md:mb-4">
             {t("landing.featuresTitle")}
           </h2>
-          <p className="mx-auto mb-12 max-w-2xl text-center text-base text-text-secondary md:mb-16">
+          <p className="mx-auto mb-8 max-w-2xl text-center text-sm text-text-secondary md:mb-16 md:text-base">
             {t("landing.featuresSubtitle")}
           </p>
-          <div className="grid gap-5 md:grid-cols-2">
+          <div className="grid gap-3 sm:gap-5 md:grid-cols-2">
             {features.map((item) => (
               <LandingFeatureCard key={item.step} {...item} />
             ))}
           </div>
-          <div className="mt-12 flex justify-center">
+          <div className="mt-8 flex justify-center md:mt-12">
             <Link href={featuresCtaHref} className="site-header-signup !rounded-lg !px-8 !py-3">
               {t("landing.featuresCta")}
             </Link>
@@ -257,15 +257,15 @@ export default function LandingPage() {
       </section>
 
       <section id="pricing" className="landing-band landing-band-pricing scroll-mt-24">
-        <div className="mx-auto max-w-6xl px-6 py-20 md:py-24">
-          <h2 className="landing-section-title mb-3 md:mb-4">
+        <div className="mx-auto max-w-6xl px-6 py-10 md:py-24">
+          <h2 className="landing-section-title mb-2 md:mb-4">
             {t("landing.pricingTitle")}
           </h2>
-          <p className="mx-auto mb-8 max-w-2xl text-center text-base text-text-secondary md:mb-10">
+          <p className="mx-auto mb-6 max-w-2xl text-center text-sm text-text-secondary md:mb-10 md:text-base">
             {t("pricing.subtitle")}
           </p>
 
-          <div className="landing-billing-toggle mb-12 md:mb-16" role="group" aria-label={t("pricing.billingToggle")}>
+          <div className="landing-billing-toggle mb-8 md:mb-16" role="group" aria-label={t("pricing.billingToggle")}>
             <button
               type="button"
               className={`landing-billing-option ${billing === "monthly" ? "is-active" : ""}`}
@@ -291,21 +291,44 @@ export default function LandingPage() {
             ))}
           </div>
 
-          <PricingBillingFAQ />
+          <div className="hidden md:block">
+            <PricingBillingFAQ />
+          </div>
+          <p className="mt-8 text-center text-sm md:hidden">
+            <Link href="/pricing" className="font-semibold text-accent-primary hover:underline">
+              {t("landing.viewFullPricing")}
+            </Link>
+          </p>
         </div>
       </section>
 
-      <LandingAnalytics />
+      <div className="hidden md:block">
+        <LandingAnalytics />
+      </div>
 
       <section id="docs" className="landing-band scroll-mt-24">
-        <div className="mx-auto max-w-3xl px-6 py-20 md:py-24">
-          <h2 className="landing-section-title mb-3 md:mb-4">
+        <div className="mx-auto max-w-3xl px-6 py-10 md:py-24">
+          <h2 className="landing-section-title mb-2 md:mb-4">
             {t("landing.docsTitle")}
           </h2>
-          <p className="mx-auto mb-12 max-w-2xl text-center text-base text-text-secondary md:mb-14">
+          <p className="mx-auto mb-6 max-w-2xl text-center text-sm text-text-secondary md:mb-14 md:text-base">
             {t("landing.docsSubtitle")}
           </p>
-          <div className="space-y-4">
+          {/* Compact teaser on mobile; full cards on desktop */}
+          <div className="md:hidden">
+            <GlassCard className="!p-5 text-center">
+              <p className="text-sm leading-relaxed text-text-secondary">
+                {t("landing.docsMobileTeaser")}
+              </p>
+              <Link
+                href="/docs"
+                className="mt-4 inline-flex font-semibold text-accent-primary hover:underline"
+              >
+                {t("landing.viewDocs")}
+              </Link>
+            </GlassCard>
+          </div>
+          <div className="hidden space-y-4 md:block">
             {docsSections.map((section) => (
               <GlassCard key={section.title}>
                 <h3 className="text-lg font-bold text-accent-primary">{section.title}</h3>
@@ -315,10 +338,10 @@ export default function LandingPage() {
               </GlassCard>
             ))}
           </div>
-          <p className="mt-8 text-center text-sm text-text-muted">
+          <p className="mt-6 text-center text-sm text-text-muted md:mt-8">
             {t("docs.needHelp")}{" "}
             <Link
-              href={session ? "/upload" : "/register"}
+              href={session ? "/dashboard" : "/register"}
               className="font-semibold text-accent-primary hover:underline"
             >
               {t("nav.signUp")}
@@ -328,14 +351,14 @@ export default function LandingPage() {
       </section>
 
       <section id="faq" className="landing-band landing-band-faq scroll-mt-24">
-        <div className="mx-auto max-w-3xl px-6 py-20 md:py-24">
-          <h2 className="landing-section-title mb-10 md:mb-14">{t("landing.faqTitle")}</h2>
+        <div className="mx-auto max-w-3xl px-6 py-10 md:py-24">
+          <h2 className="landing-section-title mb-6 md:mb-14">{t("landing.faqTitle")}</h2>
           <LandingFAQ />
         </div>
       </section>
 
       <section className="landing-band scroll-mt-24">
-        <div className="mx-auto max-w-3xl px-6 pb-20 pt-4 md:pb-28">
+        <div className="mx-auto max-w-3xl px-6 pb-12 pt-2 md:pb-28 md:pt-4">
           <div className="landing-cta-box">
             <h2 className="landing-cta-title">{t("landing.ctaTitle")}</h2>
             <Link href={ctaHref} className="landing-cta-button">
@@ -345,7 +368,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <div className="mx-auto w-full max-w-6xl px-6">
+      <div className="mx-auto hidden w-full max-w-6xl px-6 md:block">
         <SiteFooter />
       </div>
 

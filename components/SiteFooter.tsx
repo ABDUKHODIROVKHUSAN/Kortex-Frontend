@@ -40,8 +40,8 @@ export default function SiteFooter() {
 
   return (
     <footer className="site-footer mt-auto shrink-0 border-t border-border">
-      <div className="site-footer-glow mx-auto max-w-6xl px-6 py-14">
-        <div className="site-footer-workflow mb-12 rounded-2xl border border-border bg-bg-secondary p-6 md:p-8">
+      <div className="site-footer-glow mx-auto max-w-6xl px-6 py-8 md:py-14">
+        <div className="site-footer-workflow mb-8 hidden rounded-2xl border border-border bg-bg-secondary p-6 md:mb-12 md:block md:p-8">
           <p className="mb-5 text-center text-xs font-semibold uppercase tracking-[0.2em] text-accent-primary">
             {t("footer.workflowTitle")}
           </p>

@@ -383,6 +383,7 @@ html[lang="ko"] .landing-hero-line2 {
   transition: border-color 0.25s, box-shadow 0.25s;
 }
 
+
 .landing-feature-card:hover {
   border-color: color-mix(in srgb, var(--accent-primary) 35%, transparent);
   box-shadow: var(--shadow-elevated-lg);
@@ -1019,7 +1020,6 @@ html[lang="ko"] .landing-hero-line2 {
 
 .chat-toolbar {
   background: rgba(255, 255, 255, 0.95);
-  border-bottom: 1px solid var(--border);
 }
 
 .chat-message-content {
@@ -1156,6 +1156,35 @@ html[lang="ko"] .landing-hero-line2 {
 .chat-sidebar {
   background: rgba(255, 255, 255, 0.9);
   border-right-color: var(--border);
+}
+
+.chat-page {
+  min-height: 0;
+}
+
+.chat-mobile-bar {
+  background: rgba(255, 255, 255, 0.96);
+}
+
+@media (max-width: 1023px) {
+  .chat-page {
+    /* Fill viewport under sticky header so messages scroll correctly */
+    height: calc(100dvh - 4.5rem);
+    max-height: calc(100dvh - 4.5rem);
+  }
+
+  .chat-source-location {
+    width: auto;
+    min-width: 4.5rem;
+  }
+
+  .message-bubble-user {
+    word-break: break-word;
+  }
+
+  .message-bubble-assistant {
+    width: 100%;
+  }
 }
 
 .header-dropdown-panel {
@@ -1408,4 +1437,35 @@ html[lang="ko"] .landing-hero-line2 {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--accent-secondary);
+}
+
+/* Mobile-only layout compaction */
+@media (max-width: 767px) {
+  .landing-feature-card {
+    min-height: 0;
+    padding: 1.1rem 1.15rem;
+  }
+
+  .landing-feature-foot {
+    padding-top: 0.75rem;
+  }
+
+  .landing-pricing-card {
+    padding: 1.15rem 1.25rem;
+  }
+
+  .landing-pricing-card:hover,
+  .landing-pricing-card-highlight:hover {
+    transform: none;
+  }
+
+  .landing-cta-box {
+    padding: 1.5rem 1.25rem;
+  }
+
+  .landing-cta-title {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+  }
+
 }

@@ -13,7 +13,9 @@ export default function PublicPageShell({
       <SiteHeader />
       <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-6">
         <main className="flex-1 py-12">{children}</main>
-        <SiteFooter />
+        <div className="hidden md:block">
+          <SiteFooter />
+        </div>
       </div>
     </GridBackground>
   );

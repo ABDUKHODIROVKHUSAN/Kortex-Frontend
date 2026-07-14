@@ -34,14 +34,14 @@ export default function WorkspaceNav() {
 
   return (
     <nav className="workspace-nav shrink-0 border-b border-border/70 bg-bg-primary/40 backdrop-blur-sm">
-      <div className="mx-auto flex max-w-6xl gap-8 overflow-x-auto px-6">
+      <div className="mx-auto flex max-w-6xl gap-5 overflow-x-auto px-4 sm:gap-8 sm:px-6">
         {TABS.map((tab) => {
           const active = tab.match(pathname);
           return (
             <Link
               key={tab.href}
               href={tab.href}
-              className={`relative shrink-0 py-4 text-sm font-bold transition ${
+              className={`relative shrink-0 py-3 text-sm font-bold transition sm:py-4 ${
                 active
                   ? "workspace-nav-tab-active text-accent-primary"
                   : "text-text-secondary hover:text-text-primary"

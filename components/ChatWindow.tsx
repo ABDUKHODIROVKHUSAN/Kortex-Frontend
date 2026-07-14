@@ -22,7 +22,16 @@ export default function ChatWindow({ docId }: { docId: string }) {
   const [streamSources, setStreamSources] = useState<SourceChunk[]>([]);
   const [streamError, setStreamError] = useState("");
   const [usage, setUsage] = useState<ChatUsage | null>(null);
+  const [compactPlaceholder, setCompactPlaceholder] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 639px)");
+    const sync = () => setCompactPlaceholder(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
 
   const scrollToBottom = useCallback(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -125,18 +134,22 @@ export default function ChatWindow({ docId }: { docId: string }) {
 
   return (
     <div className="chat-panel flex h-full min-h-0 flex-col">
-      <ChatUsageBar usage={usage} />
-      <div className="chat-toolbar flex shrink-0 items-center justify-end px-4 py-2">
-        <Button
-          variant="ghost"
-          className="!px-3 !py-1.5 text-xs"
-          onClick={handleClearChat}
-          disabled={streaming || messages.length === 0}
-        >
-          {t("chat.clearChat")}
-        </Button>
+      <div className="chat-toolbar flex shrink-0 items-start justify-between gap-2 border-b border-border bg-bg-card/95">
+        <div className="min-w-0 flex-1">
+          <ChatUsageBar usage={usage} />
+        </div>
+        <div className="shrink-0 pr-2 pt-2 sm:pr-3 sm:pt-2.5">
+          <Button
+            variant="ghost"
+            className="!px-2 !py-1 text-xs sm:!px-3 sm:!py-1.5"
+            onClick={handleClearChat}
+            disabled={streaming || messages.length === 0}
+          >
+            {t("chat.clearChat")}
+          </Button>
+        </div>
       </div>
-      <div className="chat-messages-area flex-1 space-y-5 overflow-y-auto px-4 py-5 sm:px-6">
+      <div className="chat-messages-area min-h-0 flex-1 space-y-4 overflow-y-auto px-3 py-4 sm:space-y-5 sm:px-6 sm:py-5">
         {messages.length === 0 && !streaming && (
           <p className="text-center text-text-secondary">
             {t("chat.emptyPrompt")}
@@ -170,20 +183,24 @@ export default function ChatWindow({ docId }: { docId: string }) {
         </div>
       )}
 
-      <div className="chat-composer shrink-0 p-4">
-        <div className="flex gap-3">
+      <div className="chat-composer shrink-0 p-3 sm:p-4">
+        <div className="flex items-end gap-2 sm:gap-3">
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder={t("chat.inputPlaceholder")}
+            placeholder={
+              compactPlaceholder
+                ? t("chat.inputPlaceholderMobile")
+                : t("chat.inputPlaceholder")
+            }
             rows={2}
-            className="chat-input flex-1 resize-none rounded-xl px-4 py-3 text-sm outline-none transition focus:border-accent-primary/40 focus:ring-1 focus:ring-accent-primary/20"
+            className="chat-input min-w-0 flex-1 resize-none rounded-xl px-3 py-2.5 text-sm outline-none transition focus:border-accent-primary/40 focus:ring-1 focus:ring-accent-primary/20 sm:px-4 sm:py-3"
           />
           <Button
             onClick={sendMessage}
             disabled={streaming || !input.trim() || (usage?.requests_remaining ?? 1) <= 0}
-            className="btn-primary shrink-0 self-end"
+            className="btn-primary shrink-0 self-end !px-3 !py-2.5 sm:!px-4"
           >
             {streaming ? <Spinner /> : t("chat.send")}
           </Button>

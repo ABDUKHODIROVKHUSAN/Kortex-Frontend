@@ -23,11 +23,13 @@ export default function MessageBubble({
   const isUser = message.role === "user";
 
   return (
-    <div className={`chat-message-row flex ${isUser ? "justify-end" : "justify-start"}`}>
+    <div className={`chat-message-row flex w-full ${isUser ? "justify-end" : "justify-start"}`}>
       <div
         className={`${
-          isUser ? "message-bubble-user max-w-[min(88%,28rem)]" : "message-bubble-assistant max-w-[min(92%,40rem)]"
-        } rounded-2xl px-4 py-3 ${!isUser ? "!p-4" : ""}`}
+          isUser
+            ? "message-bubble-user max-w-[min(100%,28rem)]"
+            : "message-bubble-assistant max-w-full sm:max-w-[min(96%,40rem)]"
+        } min-w-0 rounded-2xl px-3 py-2.5 sm:px-4 sm:py-3 ${!isUser ? "!p-3 sm:!p-4" : ""}`}
       >
         {!isUser && (
           <div className="mb-2.5 flex items-center gap-2 border-b border-border/60 pb-2">

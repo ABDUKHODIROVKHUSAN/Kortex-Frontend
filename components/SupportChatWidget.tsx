@@ -201,14 +201,22 @@ export default function SupportChatWidget() {
   }
 
   return (
-    <div className="support-chat-widget pointer-events-none fixed bottom-6 right-6 z-50">
+    <div className="support-chat-widget pointer-events-none fixed bottom-4 right-4 z-50 sm:bottom-6 sm:right-6">
+      {/* Mobile: compact bottom-sheet style panel that never fills the screen */}
+      {open && (
+        <button
+          type="button"
+          className="pointer-events-auto fixed inset-0 z-40 bg-black/25 sm:hidden"
+          aria-label="Close support chat"
+          onClick={() => setOpen(false)}
+        />
+      )}
       <div
-        className={`support-chat-panel pointer-events-auto absolute bottom-[calc(100%+12px)] right-0 flex w-[360px] origin-bottom-right flex-col overflow-hidden rounded-2xl border border-accent-primary/15 bg-bg-card shadow-glow-lg transition-all duration-200 ${
+        className={`support-chat-panel pointer-events-auto absolute bottom-[calc(100%+10px)] right-0 z-50 flex origin-bottom-right flex-col overflow-hidden rounded-2xl border border-accent-primary/15 bg-bg-card shadow-glow-lg transition-all duration-200 ${
           open
             ? "pointer-events-auto scale-100 opacity-100"
             : "pointer-events-none scale-95 opacity-0"
-        }`}
-        style={{ height: 480 }}
+        } w-[min(22.5rem,calc(100vw-2rem))] h-[min(26rem,55dvh)] sm:h-[480px] sm:w-[360px]`}
         aria-hidden={!open}
       >
         <header className="support-chat-header flex shrink-0 items-center justify-between border-b border-border/80 px-4 py-3">

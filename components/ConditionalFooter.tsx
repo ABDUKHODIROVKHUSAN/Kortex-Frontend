@@ -6,5 +6,10 @@ import SiteFooter from "@/components/SiteFooter";
 export default function ConditionalFooter() {
   const pathname = usePathname();
   if (pathname.startsWith("/chat/")) return null;
-  return <SiteFooter />;
+  // Footer is desktop-only; mobile keeps the UI shorter.
+  return (
+    <div className="hidden md:block">
+      <SiteFooter />
+    </div>
+  );
 }

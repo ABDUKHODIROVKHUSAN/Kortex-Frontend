@@ -29,7 +29,29 @@ export default function SourceCitation({ sources }: { sources: SourceChunk[] }) 
         }`}
       >
         <div className="chat-table-wrap">
-          <table className="chat-table chat-sources-table">
+          <ul className="space-y-2 sm:hidden">
+            {sources.map((source, i) => (
+              <li
+                key={i}
+                className="rounded-lg border border-border bg-bg-secondary px-3 py-2"
+              >
+                {(source.page || source.paragraph_index != null) && (
+                  <span className="chat-source-badge mb-1.5 inline-block">
+                    {source.page
+                      ? t("chat.page", { page: source.page })
+                      : t("chat.section", {
+                          index: source.paragraph_index ?? 0,
+                        })}
+                  </span>
+                )}
+                <p className="text-xs leading-relaxed text-text-secondary">
+                  {source.text.slice(0, 120)}
+                  {source.text.length > 120 ? "…" : ""}
+                </p>
+              </li>
+            ))}
+          </ul>
+          <table className="chat-table chat-sources-table hidden sm:table">
             <thead>
               <tr>
                 <th>{t("chat.sourceLocation")}</th>

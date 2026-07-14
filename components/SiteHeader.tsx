@@ -10,7 +10,7 @@ import UserAvatarMenu from "@/components/UserAvatarMenu";
 import { WorkspaceNavIcon } from "@/components/NavIcons";
 import AdminUnlockDialog from "@/components/AdminUnlockDialog";
 import { useTranslation } from "@/lib/i18n/context";
-import { handleAnchorClick } from "@/lib/scroll";
+import { handleAnchorClick, smoothScrollTo } from "@/lib/scroll";
 
 function isWorkspaceRoute(pathname: string) {
   return (
@@ -31,6 +31,7 @@ export default function SiteHeader() {
     "hidden"
   );
   const [adminUnlockOpen, setAdminUnlockOpen] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const fadeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -39,6 +40,10 @@ export default function SiteHeader() {
     syncHash();
     window.addEventListener("hashchange", syncHash);
     return () => window.removeEventListener("hashchange", syncHash);
+  }, [pathname]);
+
+  useEffect(() => {
+    setMobileNavOpen(false);
   }, [pathname]);
 
   useEffect(() => {
@@ -91,11 +96,35 @@ export default function SiteHeader() {
         : "text-text-primary hover:text-accent-primary"
     }`;
 
+  const closeMobileNav = () => setMobileNavOpen(false);
+
+  const goMobileHash = (anchor: string) => {
+    closeMobileNav();
+    const hash = anchor.startsWith("#") ? anchor : `#${anchor}`;
+    // Wait for the menu to collapse so scroll position is correct.
+    window.setTimeout(() => {
+      if (pathname === "/") {
+        smoothScrollTo(hash);
+        setHash(hash);
+      } else {
+        router.push(`/${hash}`);
+      }
+    }, 50);
+  };
+
+  const goMobilePage = (href: string) => {
+    closeMobileNav();
+    router.push(href);
+  };
+
+  const mobileNavLinkClass =
+    "block w-full rounded-lg px-3 py-2.5 text-left text-sm font-semibold text-text-primary transition hover:bg-accent-primary/10 hover:text-accent-primary";
+
   return (
     <header className="site-header">
-      <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-6 px-6 py-4">
-        <div className="flex min-w-0 flex-1 items-center gap-8 lg:gap-10">
-          <Link href="/" className="shrink-0">
+      <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:gap-6 sm:px-6 sm:py-4">
+        <div className="flex min-w-0 flex-1 items-center gap-3 sm:gap-8 lg:gap-10">
+          <Link href="/" className="shrink-0" onClick={closeMobileNav}>
             <KortexLogo />
           </Link>
 
@@ -174,7 +203,25 @@ export default function SiteHeader() {
           </nav>
         </div>
 
-        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+        <div className="flex shrink-0 items-center gap-1.5 sm:gap-3">
+          <button
+            type="button"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border text-text-primary transition hover:border-accent-primary/30 hover:text-accent-primary md:hidden"
+            aria-expanded={mobileNavOpen}
+            aria-label={mobileNavOpen ? "Close menu" : "Open menu"}
+            onClick={() => setMobileNavOpen((open) => !open)}
+          >
+            <span className="sr-only">{mobileNavOpen ? "Close menu" : "Open menu"}</span>
+            {mobileNavOpen ? (
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden>
+                <path d="M4 4l10 10M14 4L4 14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+              </svg>
+            ) : (
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden>
+                <path d="M3 5h12M3 9h12M3 13h12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+              </svg>
+            )}
+          </button>
           <LanguageSwitcher utility />
           {session ? (
             <>
@@ -183,7 +230,7 @@ export default function SiteHeader() {
                   <button
                     type="button"
                     onClick={() => setAdminUnlockOpen(true)}
-                    className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-bold uppercase tracking-wide transition ${
+                    className={`hidden items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-bold uppercase tracking-wide transition sm:inline-flex ${
                       pathname === "/admin"
                         ? "border-accent-primary bg-accent-primary text-white shadow-glow-btn"
                         : "border-accent-primary/30 bg-accent-primary/10 text-accent-primary hover:border-accent-primary/50 hover:bg-accent-primary/15"
@@ -211,13 +258,44 @@ export default function SiteHeader() {
               >
                 {t("nav.logIn")}
               </Link>
-              <Link href="/register" className="site-header-signup">
+              <Link href="/register" className="site-header-signup !px-3 !py-1.5 text-sm sm:!px-4">
                 {t("nav.signUp")}
               </Link>
             </>
           )}
         </div>
       </div>
+
+      {mobileNavOpen && (
+        <nav className="border-t border-border bg-bg-card px-4 py-3 md:hidden">
+          <div className="mx-auto flex max-w-6xl flex-col gap-1">
+            <button type="button" className={mobileNavLinkClass} onClick={() => goMobileHash("#features")}>
+              {t("nav.features")}
+            </button>
+            <button
+              type="button"
+              className={mobileNavLinkClass}
+              onClick={() => goMobilePage(session ? "/dashboard" : "/register")}
+            >
+              {t("nav.workspace")}
+            </button>
+            <button type="button" className={mobileNavLinkClass} onClick={() => goMobileHash("#pricing")}>
+              {t("nav.pricing")}
+            </button>
+            <button type="button" className={mobileNavLinkClass} onClick={() => goMobilePage("/analytics")}>
+              {t("nav.analytics")}
+            </button>
+            <button type="button" className={mobileNavLinkClass} onClick={() => goMobilePage("/docs")}>
+              {t("nav.docs")}
+            </button>
+            {!session && (
+              <button type="button" className={mobileNavLinkClass} onClick={() => goMobilePage("/login")}>
+                {t("nav.logIn")}
+              </button>
+            )}
+          </div>
+        </nav>
+      )}
     </header>
   );
 }
