@@ -34,6 +34,38 @@ export interface User {
   phone?: string | null;
   avatar_url?: string | null;
   subscription_tier?: string;
+  is_admin?: boolean;
+}
+
+export interface AdminStats {
+  total_users: number;
+  total_documents: number;
+  free_users: number;
+  pro_users: number;
+  business_users: number;
+  unread_failures: number;
+}
+
+export interface AdminUserItem {
+  id: string;
+  email: string;
+  full_name: string;
+  subscription_tier: string;
+  is_admin: boolean;
+  document_count: number;
+  created_at: string | null;
+}
+
+export interface AdminFailureItem {
+  id: string;
+  user_id: string | null;
+  user_email: string | null;
+  document_id: string | null;
+  error_type: string;
+  message: string;
+  query_preview: string | null;
+  is_read: boolean;
+  created_at: string | null;
 }
 
 export interface Document {

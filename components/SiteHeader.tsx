@@ -8,6 +8,7 @@ import { KortexLogo } from "@/components/KortexLogo";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import UserAvatarMenu from "@/components/UserAvatarMenu";
 import { WorkspaceNavIcon } from "@/components/NavIcons";
+import AdminUnlockDialog from "@/components/AdminUnlockDialog";
 import { useTranslation } from "@/lib/i18n/context";
 import { handleAnchorClick } from "@/lib/scroll";
 
@@ -29,6 +30,7 @@ export default function SiteHeader() {
   const [workspacePrompt, setWorkspacePrompt] = useState<"hidden" | "visible" | "fading">(
     "hidden"
   );
+  const [adminUnlockOpen, setAdminUnlockOpen] = useState(false);
   const fadeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -175,7 +177,32 @@ export default function SiteHeader() {
         <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           <LanguageSwitcher utility />
           {session ? (
-            <UserAvatarMenu />
+            <>
+              {session.user?.isAdmin && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setAdminUnlockOpen(true)}
+                    className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-bold uppercase tracking-wide transition ${
+                      pathname === "/admin"
+                        ? "border-accent-primary bg-accent-primary text-white shadow-glow-btn"
+                        : "border-accent-primary/30 bg-accent-primary/10 text-accent-primary hover:border-accent-primary/50 hover:bg-accent-primary/15"
+                    }`}
+                  >
+                    {t("nav.adminDashboard")}
+                  </button>
+                  <AdminUnlockDialog
+                    open={adminUnlockOpen}
+                    onClose={() => setAdminUnlockOpen(false)}
+                    onUnlocked={() => {
+                      setAdminUnlockOpen(false);
+                      router.push("/admin");
+                    }}
+                  />
+                </>
+              )}
+              <UserAvatarMenu />
+            </>
           ) : (
             <>
               <Link

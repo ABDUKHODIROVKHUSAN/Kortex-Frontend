@@ -1,6 +1,9 @@
 import type {
   ApiResponse,
   AnalyticsSummary,
+  AdminFailureItem,
+  AdminStats,
+  AdminUserItem,
   ChatMessage,
   ChatSessionSummary,
   ChatUsage,
@@ -222,6 +225,33 @@ export async function clearChatHistory(
 
 export async function getAnalyticsSummary(): Promise<ApiResponse<AnalyticsSummary>> {
   return apiFetch<AnalyticsSummary>("/api/analytics/summary");
+}
+
+export async function getAdminStats(token: string): Promise<ApiResponse<AdminStats>> {
+  return apiFetch<AdminStats>("/api/admin/stats", {}, token);
+}
+
+export async function getAdminUsers(token: string): Promise<ApiResponse<AdminUserItem[]>> {
+  return apiFetch<AdminUserItem[]>("/api/admin/users", {}, token);
+}
+
+export async function getAdminFailures(
+  token: string
+): Promise<ApiResponse<AdminFailureItem[]>> {
+  return apiFetch<AdminFailureItem[]>("/api/admin/failures", {}, token);
+}
+
+export async function markAdminFailureRead(
+  token: string,
+  failureId: string
+): Promise<ApiResponse<{ id: string; is_read: boolean }>> {
+  return apiFetch(`/api/admin/failures/${failureId}/read`, { method: "POST" }, token);
+}
+
+export async function markAllAdminFailuresRead(
+  token: string
+): Promise<ApiResponse<{ updated: number }>> {
+  return apiFetch("/api/admin/failures/read-all", { method: "POST" }, token);
 }
 
 export async function streamChat(

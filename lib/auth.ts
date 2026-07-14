@@ -1,7 +1,5 @@
 import NextAuth from "next-auth";
-
 import Credentials from "next-auth/providers/credentials";
-
 import { loginUser } from "@/lib/api";
 
 /** JWT cookies must stay small — never store base64 avatars in the token. */
@@ -11,93 +9,54 @@ function avatarForToken(url?: string | null): string | undefined {
 }
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-
   providers: [
-
     Credentials({
-
       name: "credentials",
-
       credentials: {
-
         email: { label: "Email", type: "email" },
-
         password: { label: "Password", type: "password" },
-
       },
-
       async authorize(credentials) {
-
         if (!credentials?.email || !credentials?.password) return null;
 
-
-
         try {
-
           const res = await loginUser({
-
             email: credentials.email as string,
-
             password: credentials.password as string,
-
           });
 
-
-
           if (res.success && res.data) {
-
             const u = res.data.user;
-
             return {
-
               id: u.id,
-
               email: u.email,
-
               name: u.full_name,
-
               image: avatarForToken(u.avatar_url),
-
               phone: u.phone ?? undefined,
-
               accessToken: res.data.access_token,
-
               subscriptionTier: u.subscription_tier ?? "free",
-
+              isAdmin: Boolean(u.is_admin),
             };
-
           }
-
         } catch {
-
           return null;
-
         }
-
         return null;
-
       },
-
     }),
-
   ],
-
   session: { strategy: "jwt" },
-
   pages: {
-
     signIn: "/login",
-
   },
-
   callbacks: {
-
     async jwt({ token, user, trigger, session }) {
       if (user) {
         token.accessToken = user.accessToken;
         token.id = user.id;
         token.phone = user.phone;
         token.subscriptionTier = user.subscriptionTier ?? "free";
+        token.isAdmin = Boolean(user.isAdmin);
         const safe = avatarForToken(user.image);
         if (safe) token.picture = safe;
       }
@@ -117,6 +76,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         if ("subscriptionTier" in session && session.subscriptionTier) {
           token.subscriptionTier = session.subscriptionTier as string;
         }
+        if ("isAdmin" in session) {
+          token.isAdmin = Boolean(session.isAdmin);
+        }
         if ("avatarVersion" in session) {
           token.avatarVersion = session.avatarVersion as number;
         }
@@ -132,6 +94,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.id = token.id as string;
         session.user.phone = token.phone as string | undefined;
         session.user.subscriptionTier = (token.subscriptionTier as string) || "free";
+        session.user.isAdmin = Boolean(token.isAdmin);
         if (token.picture) session.user.image = token.picture as string;
         if (token.avatarVersion) {
           (session.user as { avatarVersion?: number }).avatarVersion =
@@ -141,8 +104,5 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
       return session;
     },
-
   },
-
 });
-

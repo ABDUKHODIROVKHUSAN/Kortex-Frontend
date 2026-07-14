@@ -8,6 +8,7 @@ declare module "next-auth" {
       phone?: string;
       avatarVersion?: number;
       subscriptionTier?: string;
+      isAdmin?: boolean;
     };
   }
 
@@ -15,6 +16,7 @@ declare module "next-auth" {
     accessToken: string;
     phone?: string;
     subscriptionTier?: string;
+    isAdmin?: boolean;
   }
 }
 
@@ -25,5 +27,6 @@ declare module "next-auth/jwt" {
     phone?: string;
     avatarVersion?: number;
     subscriptionTier?: string;
+    isAdmin?: boolean;
   }
 }
