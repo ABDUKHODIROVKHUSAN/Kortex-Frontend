@@ -207,6 +207,7 @@ export default function LandingPage() {
   ];
 
   const pricingTiers = getPricingTiers(t, session, billing);
+  const featuresCtaHref = session ? "/dashboard" : "/register";
   const ctaHref = session ? "/dashboard" : "/register";
 
   return (
@@ -247,6 +248,11 @@ export default function LandingPage() {
             {features.map((item) => (
               <LandingFeatureCard key={item.step} {...item} />
             ))}
+          </div>
+          <div className="mt-8 flex justify-center md:mt-12">
+            <Link href={featuresCtaHref} className="site-header-signup !rounded-lg !px-8 !py-3">
+              {t("landing.featuresCta")}
+            </Link>
           </div>
         </div>
       </section>

@@ -18,4 +18,5 @@ export function saveRagSettings(settings: RagSettings) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
 }
 
-/** Chunk size/overlap apply on the next upload. Response style applies on the next chat turn. */
+// Backend wiring pending: chunk size/overlap apply on next upload;
+// response style and citation toggle will map to chat prompt params.

@@ -108,8 +108,7 @@ const en: Messages = {
     sessionMeta: "{messages} messages · last active {time}",
     continueChat: "Continue chat",
     aiRetrieval: "AI & retrieval",
-    aiRetrievalDesc:
-      "Chunk size/overlap apply on the next upload. Response style applies on the next chat turn. Citation excerpts toggle is immediate.",
+    aiRetrievalDesc: "Tune how documents are chunked and how answers are formatted.",
     chunkSize: "Chunk size",
     chunkOverlap: "Chunk overlap",
     responseStyle: "Response style",
@@ -221,7 +220,7 @@ const en: Messages = {
       "Open a ready document from My documents and chat in natural language. Press Enter to send, Shift+Enter for a new line.",
     citations: "Source citations",
     citationsDesc:
-      "Every AI answer includes expandable sources. Click a citation to open the original PDF on the matching page with the excerpt highlighted.",
+      "Every AI answer includes expandable sources so you can verify answers against the original document.",
     needHelp: "Ready to try it?",
   },
   hero: {
@@ -229,7 +228,7 @@ const en: Messages = {
     titleRest: "your documents",
     titleLine2: "and learn them fast",
     subtitle:
-      "Upload PDFs and Word docs, get AI answers with clickable citations — hybrid RAG (BM25 + vectors) and streaming LLMs.",
+      "Upload PDFs and Word docs, get AI-powered answers with source citations — powered by RAG and Claude.",
   },
   steps: {
     s01Title: "Upload",
@@ -247,12 +246,12 @@ const en: Messages = {
       "Parse, chunk, and embed your documents automatically. Kortex turns raw PDFs and DOCX files into searchable knowledge your AI can reason over.",
     searchTitle: "High-precision hybrid search",
     searchDesc:
-      "BM25 keyword search plus dense vectors, fused with Reciprocal Rank Fusion — then an LLM synthesizes answers you can verify with clickable citations.",
+      "Vector retrieval finds the most relevant passages, then Claude synthesizes accurate answers with source citations you can verify.",
   },
   landing: {
     featuresTitle: "Features",
     featuresSubtitle:
-      "Everything in Kortex — from Workspace uploads to hybrid retrieval and clickable PDF citations.",
+      "Everything in Kortex — from Workspace uploads to citation-backed answers powered by RAG and Claude.",
     featuresCta: "Open Workspace",
     docsTitle: "Documentation",
     docsSubtitle: "A quick overview of how to get the most out of Kortex.",
@@ -270,8 +269,8 @@ const en: Messages = {
     f02Foot: "PDF & DOCX · up to 50 MB",
     f03Title: "Citations you can trust",
     f03Desc:
-      "Every answer includes expandable sources with page references. Click one to jump into the PDF viewer on the exact page.",
-    f03Foot: "Click-to-cite PDF viewer",
+      "Every answer includes expandable sources with page and section references, so you can verify claims against the original document.",
+    f03Foot: "Built for research and study",
     f04Title: "Multilingual by design",
     f04Desc:
       "Use Kortex in English, Korean, Uzbek, or Russian. Index documents across languages and ask questions in the language that works for you.",
@@ -511,30 +510,6 @@ const en: Messages = {
     sourceExcerpt: "Excerpt",
     page: "Page {page}",
     section: "Section {index}",
-    openInPdf: "Open in PDF",
-    view: "View",
-    sourceUntitled: "Source",
-    pdfViewerTitle: "Source in document",
-    pdfViewerPage: "Jumping to page {page}",
-    pdfLoading: "Loading document…",
-    pdfLoadFailed: "Could not load the original file",
-    matchedExcerpt: "Matched excerpt",
-    docxViewerHint: "In-app page jump works for PDFs. Download the original DOCX to verify this section.",
-    downloadOriginal: "Download original file",
-    retrievalBadge: "{method} · {ms}ms · {count} chunks",
-    chunkSettings: "Chunk size / overlap",
-    retrieval: "Retrieval",
-    hybridRetrieval: "Hybrid (BM25 + vectors)",
-  },
-  demo: {
-    title: "Try the Korean demo",
-    subtitle:
-      "Download a sample Korean PDF built for recruiters — upload it, ask the suggested questions, then click a citation to jump into the PDF.",
-    download: "Download sample PDF",
-    uploadCta: "Upload & try",
-    q1: "Why is hybrid search needed?",
-    q2: "List the RAG pipeline steps",
-    q3: "What is DEMO-HYBRID-RRF?",
   },
   meta: {
     title: "Kortex — Ask your documents anything",
@@ -641,8 +616,7 @@ const ko: Messages = {
     sessionMeta: "메시지 {messages}개 · 마지막 활동 {time}",
     continueChat: "채팅 계속",
     aiRetrieval: "AI 및 검색",
-    aiRetrievalDesc:
-      "청크 크기/오버랩은 다음 업로드에 적용됩니다. 답변 스타일은 다음 질문에 적용됩니다. 출처 표시는 즉시 반영됩니다.",
+    aiRetrievalDesc: "문서 청킹 및 답변 형식을 조정합니다.",
     chunkSize: "청크 크기",
     chunkOverlap: "청크 겹침",
     responseStyle: "응답 스타일",
@@ -754,7 +728,7 @@ const ko: Messages = {
       "내 문서에서 준비된 파일을 열고 자연어로 대화하세요. Enter: 전송, Shift+Enter: 줄바꿈.",
     citations: "출처 인용",
     citationsDesc:
-      "모든 AI 답변에 확장 가능한 출처가 포함됩니다. 출처를 클릭하면 원본 PDF의 해당 페이지로 이동하고 발췌가 강조됩니다.",
+      "모든 AI 답변에 확장 가능한 출처가 포함되어 원문을 확인할 수 있습니다.",
     needHelp: "지금 시작할까요?",
   },
   hero: {
@@ -762,7 +736,7 @@ const ko: Messages = {
     titleRest: "문서를",
     titleLine2: "빠르게 학습하세요",
     subtitle:
-      "PDF·Word를 업로드하고, 클릭 가능한 출처와 함께 AI 답변을 받으세요 — 하이브리드 RAG(BM25+벡터)와 스트리밍 LLM.",
+      "PDF와 Word 문서를 업로드하고, RAG와 Claude로 출처가 포함된 AI 답변을 받으세요.",
   },
   steps: {
     s01Title: "업로드",
@@ -780,12 +754,12 @@ const ko: Messages = {
       "문서를 자동으로 파싱, 청킹, 임베딩합니다. Kortex는 PDF와 DOCX를 AI가 이해할 수 있는 검색 가능한 지식으로 변환합니다.",
     searchTitle: "고정밀 하이브리드 검색",
     searchDesc:
-      "BM25 키워드 검색과 벡터 검색을 RRF로 합친 뒤, LLM이 클릭 가능한 출처와 함께 답변을 생성합니다.",
+      "벡터 검색으로 관련 구절을 찾고, Claude가 검증 가능한 출처 인용과 함께 정확한 답변을 생성합니다.",
   },
   landing: {
     featuresTitle: "기능",
     featuresSubtitle:
-      "Kortex의 모든 것 — Workspace 업로드부터 하이브리드 검색과 클릭형 PDF 출처까지.",
+      "Kortex의 모든 것 — Workspace 업로드부터 RAG와 Claude 기반 출처 인용 답변까지.",
     featuresCta: "워크스페이스 열기",
     docsTitle: "문서",
     docsSubtitle: "Kortex를 최대한 활용하는 방법을 간단히 알아보세요.",
@@ -803,8 +777,8 @@ const ko: Messages = {
     f02Foot: "PDF & DOCX · 최대 50MB",
     f03Title: "검증 가능한 출처 인용",
     f03Desc:
-      "모든 답변에 페이지 출처가 포함됩니다. 출처를 클릭하면 PDF 뷰어가 해당 페이지로 이동합니다.",
-    f03Foot: "클릭-투-사이트 PDF 뷰어",
+      "모든 답변에 페이지·섹션 참조가 있는 출처가 포함되어 원문과 대조해 확인할 수 있습니다.",
+    f03Foot: "연구와 학습을 위해",
     f04Title: "다국어 지원",
     f04Desc:
       "영어, 한국어, 우즈벡어, 러시아어로 Kortex를 사용하세요. 다양한 언어 문서를 인덱싱하고 편한 언어로 질문하세요.",
@@ -1044,30 +1018,6 @@ const ko: Messages = {
     sourceExcerpt: "발췌",
     page: "{page}페이지",
     section: "섹션 {index}",
-    openInPdf: "PDF에서 열기",
-    view: "보기",
-    sourceUntitled: "출처",
-    pdfViewerTitle: "문서 속 출처",
-    pdfViewerPage: "{page}페이지로 이동",
-    pdfLoading: "문서 불러오는 중…",
-    pdfLoadFailed: "원본 파일을 불러오지 못했습니다",
-    matchedExcerpt: "매칭된 발췌",
-    docxViewerHint: "페이지 점프는 PDF에서 지원됩니다. DOCX는 원본을 다운로드해 확인하세요.",
-    downloadOriginal: "원본 파일 다운로드",
-    retrievalBadge: "{method} · {ms}ms · 청크 {count}개",
-    chunkSettings: "청크 크기 / 오버랩",
-    retrieval: "검색",
-    hybridRetrieval: "하이브리드 (BM25 + 벡터)",
-  },
-  demo: {
-    title: "한국어 데모 체험",
-    subtitle:
-      "채용 담당자용 한국어 샘플 PDF를 받아 업로드한 뒤, 추천 질문을 하고 출처를 클릭해 PDF 페이지로 이동해 보세요.",
-    download: "샘플 PDF 다운로드",
-    uploadCta: "업로드하고 체험",
-    q1: "하이브리드 검색이 왜 필요한가?",
-    q2: "RAG 파이프라인 단계를 말해줘",
-    q3: "DEMO-HYBRID-RRF가 뭐야?",
   },
   meta: {
     title: "Kortex — 문서에 무엇이든 질문하세요",
@@ -1576,30 +1526,6 @@ const uz: Messages = {
     sourceExcerpt: "Parcha",
     page: "{page}-sahifa",
     section: "Bo'lim {index}",
-    openInPdf: "PDFda ochish",
-    view: "Ko'rish",
-    sourceUntitled: "Manba",
-    pdfViewerTitle: "Hujjatdagi manba",
-    pdfViewerPage: "{page}-sahifaga o'tish",
-    pdfLoading: "Hujjat yuklanmoqda…",
-    pdfLoadFailed: "Asl faylni yuklab bo'lmadi",
-    matchedExcerpt: "Mos kelgan parcha",
-    docxViewerHint: "Sahifa sakrash PDF uchun ishlaydi. DOCX uchun asl faylni yuklab oling.",
-    downloadOriginal: "Asl faylni yuklab olish",
-    retrievalBadge: "{method} · {ms}ms · {count} chunk",
-    chunkSettings: "Chunk o'lchami / overlap",
-    retrieval: "Qidiruv",
-    hybridRetrieval: "Gibrid (BM25 + vektorlar)",
-  },
-  demo: {
-    title: "Koreys demo bilan sinab ko'ring",
-    subtitle:
-      "Namuna PDF ni yuklab oling, yuklang, savollar bering va iqtibosni bosib PDF sahifasiga o'ting.",
-    download: "Namuna PDF yuklab olish",
-    uploadCta: "Yuklash va sinash",
-    q1: "Nima uchun gibrid qidiruv kerak?",
-    q2: "RAG pipeline bosqichlarini ayting",
-    q3: "DEMO-HYBRID-RRF nima?",
   },
   meta: {
     title: "Kortex — Hujjatlaringizga istalgan savol bering",
@@ -2108,30 +2034,6 @@ const ru: Messages = {
     sourceExcerpt: "Фрагмент",
     page: "Стр. {page}",
     section: "Раздел {index}",
-    openInPdf: "Открыть в PDF",
-    view: "Смотреть",
-    sourceUntitled: "Источник",
-    pdfViewerTitle: "Источник в документе",
-    pdfViewerPage: "Переход на стр. {page}",
-    pdfLoading: "Загрузка документа…",
-    pdfLoadFailed: "Не удалось загрузить исходный файл",
-    matchedExcerpt: "Найденный фрагмент",
-    docxViewerHint: "Переход по страницам работает для PDF. Для DOCX скачайте оригинал.",
-    downloadOriginal: "Скачать оригинал",
-    retrievalBadge: "{method} · {ms}мс · {count} фрагм.",
-    chunkSettings: "Размер / overlap чанка",
-    retrieval: "Поиск",
-    hybridRetrieval: "Гибридный (BM25 + векторы)",
-  },
-  demo: {
-    title: "Попробуйте корейское демо",
-    subtitle:
-      "Скачайте образец PDF, загрузите его, задайте вопросы и нажмите цитату, чтобы открыть страницу PDF.",
-    download: "Скачать образец PDF",
-    uploadCta: "Загрузить и попробовать",
-    q1: "Зачем нужен гибридный поиск?",
-    q2: "Перечислите шаги RAG-пайплайна",
-    q3: "Что такое DEMO-HYBRID-RRF?",
   },
   meta: {
     title: "Kortex — Спросите ваши документы о чём угодно",

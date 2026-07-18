@@ -88,8 +88,6 @@ export interface Document {
   chunk_count: number;
   progress_percent?: number;
   progress_stage?: IndexingStage | string;
-  chunk_size?: number;
-  chunk_overlap?: number;
   created_at: string;
 }
 
@@ -98,15 +96,6 @@ export interface SourceChunk {
   page?: number;
   paragraph_index?: number;
   chunk_index?: number;
-  score?: number | null;
-  retrieval_method?: string;
-}
-
-export interface RetrievalMeta {
-  method: string;
-  top_k: number;
-  chunk_count: number;
-  latency_ms: number;
 }
 
 export interface ChatMessage {

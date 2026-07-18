@@ -5,8 +5,6 @@ const nextConfig = {
     if (dev) {
       config.cache = { type: "memory" };
     }
-    // react-pdf / pdfjs optional canvas dependency
-    config.resolve.alias.canvas = false;
     return config;
   },
 };

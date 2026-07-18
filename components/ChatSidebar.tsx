@@ -39,16 +39,6 @@ function DocMetaCard({ doc }: { doc: Document }) {
             <th scope="row">{t("chat.chunks")}</th>
             <td>{doc.chunk_count}</td>
           </tr>
-          <tr>
-            <th scope="row">{t("chat.chunkSettings")}</th>
-            <td>
-              {doc.chunk_size ?? 500} / {doc.chunk_overlap ?? 50}
-            </td>
-          </tr>
-          <tr>
-            <th scope="row">{t("chat.retrieval")}</th>
-            <td>{t("chat.hybridRetrieval")}</td>
-          </tr>
         </tbody>
       </table>
     </GlassCard>
