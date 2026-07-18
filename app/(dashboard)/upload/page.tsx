@@ -76,7 +76,7 @@ export default function UploadPage() {
         });
         router.push(`/chat/${readyId}`);
       }
-    }, 2000);
+    }, 1200);
 
     return () => clearInterval(interval);
   }, [processingIds, session?.accessToken, router, t]);
@@ -123,6 +123,8 @@ export default function UploadPage() {
         file_size: 0,
         status: "processing",
         chunk_count: 0,
+        progress_percent: activeUpload.progress,
+        progress_stage: "queued",
         created_at: new Date().toISOString(),
         isUploading: true,
         uploadProgress: activeUpload.progress,

@@ -234,52 +234,196 @@ export default function ProfilePageContent() {
 
       <GlassCard className="relative mb-8 overflow-hidden !p-0">
         <div className="absolute inset-0 bg-gradient-to-br from-accent-primary/10 via-transparent to-accent-secondary/5" />
-        <div className="relative flex flex-col gap-6 p-8 sm:flex-row sm:items-center">
-          <div className="relative shrink-0">
-            {avatar ? (
-              <Image
-                src={avatar}
-                alt=""
-                width={80}
-                height={80}
-                className="h-20 w-20 rounded-2xl border border-accent-primary/30 object-cover shadow-glow"
-              />
-            ) : (
-              <div className="flex h-20 w-20 items-center justify-center rounded-2xl border border-accent-primary/30 bg-accent-primary/10 text-3xl font-bold text-accent-primary shadow-glow">
-                {initial}
-              </div>
-            )}
-            {editing && (
-              <>
-                <input
-                  ref={fileRef}
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={(e) => handlePhoto(e.target.files?.[0] ?? null)}
-                />
-                <button
-                  type="button"
-                  onClick={() => fileRef.current?.click()}
-                  className="absolute -bottom-1 -right-1 rounded-full border border-accent-primary/40 bg-bg-secondary px-2 py-0.5 text-[10px] font-medium text-accent-primary shadow-glow"
+        <div className="relative p-6 sm:p-8">
+          <div className="mb-5 flex items-center justify-between gap-3">
+            <h2 className="text-sm font-semibold uppercase tracking-wide text-accent-primary">
+              {t("profile.accountDetails")}
+            </h2>
+            {editing ? (
+              <div className="flex gap-2">
+                <Button
+                  variant="ghost"
+                  className="!px-3 !py-1.5 text-xs"
+                  onClick={cancelEdit}
+                  disabled={saving}
                 >
-                  {t("profile.uploadPhoto")}
-                </button>
-              </>
+                  {t("profile.cancel")}
+                </Button>
+                <Button
+                  className="!px-3 !py-1.5 text-xs"
+                  onClick={handleSave}
+                  disabled={saving}
+                >
+                  {saving ? <Spinner /> : t("profile.saveChanges")}
+                </Button>
+              </div>
+            ) : (
+              <Button
+                variant="secondary"
+                className="!px-3 !py-1.5 text-xs"
+                onClick={startEdit}
+              >
+                {t("profile.edit")}
+              </Button>
             )}
           </div>
-          <div className="min-w-0 flex-1">
-            <div className="mb-2 flex flex-wrap items-center gap-2">
-              <h1 className="text-2xl font-bold text-text-primary">{displayName}</h1>
-              <Link href="/#pricing">
-                <Badge color="success">{t("profile.free")}</Badge>
-              </Link>
+
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
+            <div className="relative shrink-0">
+              {avatar ? (
+                <Image
+                  src={avatar}
+                  alt=""
+                  width={80}
+                  height={80}
+                  className="h-20 w-20 rounded-2xl border border-accent-primary/30 object-cover shadow-glow"
+                />
+              ) : (
+                <div className="flex h-20 w-20 items-center justify-center rounded-2xl border border-accent-primary/30 bg-accent-primary/10 text-3xl font-bold text-accent-primary shadow-glow">
+                  {initial}
+                </div>
+              )}
+              {editing && (
+                <>
+                  <input
+                    ref={fileRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => handlePhoto(e.target.files?.[0] ?? null)}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => fileRef.current?.click()}
+                    className="absolute -bottom-1 -right-1 rounded-full border border-accent-primary/40 bg-bg-secondary px-2 py-0.5 text-[10px] font-medium text-accent-primary shadow-glow"
+                  >
+                    {t("profile.uploadPhoto")}
+                  </button>
+                </>
+              )}
             </div>
-            <p className="text-sm text-text-secondary">{displayEmail}</p>
-            {displayPhone && (
-              <p className="mt-1 text-sm text-text-muted">{displayPhone}</p>
+            <div className="min-w-0 flex-1">
+              <div className="mb-2 flex flex-wrap items-center gap-2">
+                <h1 className="text-2xl font-bold text-text-primary">{displayName}</h1>
+                <Link href="/#pricing">
+                  <Badge color="success">
+                    {t(
+                      subscriptionTier === "pro"
+                        ? "profile.pro"
+                        : subscriptionTier === "business"
+                          ? "profile.business"
+                          : "profile.free"
+                    )}
+                  </Badge>
+                </Link>
+              </div>
+              <p className="text-sm text-text-secondary">{displayEmail}</p>
+              {displayPhone && (
+                <p className="mt-1 text-sm text-text-muted">{displayPhone}</p>
+              )}
+              <p className="mt-2 text-sm text-text-muted">{t("profile.subtitle")}</p>
+            </div>
+          </div>
+
+          <div className="mt-6 border-t border-border/70 pt-6">
+            {editing ? (
+              <div className="space-y-4">
+                <div>
+                  <label className="mb-1.5 block text-xs text-text-muted">
+                    {t("auth.fullName")}
+                  </label>
+                  <Input
+                    value={form.full_name}
+                    onChange={(e) =>
+                      setForm((p) => ({ ...p, full_name: e.target.value }))
+                    }
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="mb-1.5 block text-xs text-text-muted">
+                    {t("profile.email")}
+                  </label>
+                  <Input
+                    type="email"
+                    value={form.email}
+                    onChange={(e) =>
+                      setForm((p) => ({ ...p, email: e.target.value }))
+                    }
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="mb-1.5 block text-xs text-text-muted">
+                    {t("profile.phone")}
+                  </label>
+                  <Input
+                    type="tel"
+                    value={form.phone}
+                    onChange={(e) =>
+                      setForm((p) => ({ ...p, phone: e.target.value }))
+                    }
+                    placeholder={t("profile.phonePlaceholder")}
+                  />
+                </div>
+                {form.avatar_url && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="text-xs"
+                    onClick={() => setForm((p) => ({ ...p, avatar_url: null }))}
+                  >
+                    {t("profile.removePhoto")}
+                  </Button>
+                )}
+              </div>
+            ) : (
+              <dl className="space-y-3 text-sm">
+                {session?.user?.isAdmin && userId && (
+                  <div className="flex justify-between gap-4 border-b border-border/60 pb-3">
+                    <dt className="text-text-muted">{t("profile.userId")}</dt>
+                    <dd className="truncate font-mono text-xs text-text-primary">
+                      {userId}
+                    </dd>
+                  </div>
+                )}
+                <div className="flex justify-between gap-4 border-b border-border/60 pb-3">
+                  <dt className="text-text-muted">{t("auth.fullName")}</dt>
+                  <dd className="text-text-primary">{displayName}</dd>
+                </div>
+                <div className="flex justify-between gap-4 border-b border-border/60 pb-3">
+                  <dt className="text-text-muted">{t("profile.email")}</dt>
+                  <dd className="truncate text-text-primary">{displayEmail}</dd>
+                </div>
+                <div className="flex justify-between gap-4 border-b border-border/60 pb-3">
+                  <dt className="text-text-muted">{t("profile.phone")}</dt>
+                  <dd className="text-text-primary">
+                    {displayPhone || t("profile.noPhone")}
+                  </dd>
+                </div>
+                <div className="flex items-center justify-between gap-4">
+                  <dt className="text-text-muted">{t("profile.plan")}</dt>
+                  <dd className="flex items-center gap-2">
+                    <span className="text-accent-primary">
+                      {t(
+                        subscriptionTier === "pro"
+                          ? "profile.pro"
+                          : subscriptionTier === "business"
+                            ? "profile.business"
+                            : "profile.free"
+                      )}
+                    </span>
+                    <Link
+                      href="/#pricing"
+                      className="text-xs text-text-secondary transition hover:text-accent-primary"
+                    >
+                      {t("profile.upgradePlan")} →
+                    </Link>
+                  </dd>
+                </div>
+              </dl>
             )}
-            <p className="mt-2 text-sm text-text-muted">{t("profile.subtitle")}</p>
+            {error && <p className="mt-4 text-sm text-error">{error}</p>}
           </div>
         </div>
       </GlassCard>
@@ -339,112 +483,6 @@ export default function ProfilePageContent() {
         </Link>
         </GlassCard>
       </div>
-
-      <GlassCard>
-        <div className="mb-4 flex items-center justify-between gap-4">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-accent-primary">
-            {t("profile.accountDetails")}
-          </h2>
-          {editing ? (
-            <div className="flex gap-2">
-              <Button variant="ghost" className="!px-3 !py-1.5 text-xs" onClick={cancelEdit} disabled={saving}>
-                {t("profile.cancel")}
-              </Button>
-              <Button className="!px-3 !py-1.5 text-xs" onClick={handleSave} disabled={saving}>
-                {saving ? <Spinner /> : t("profile.saveChanges")}
-              </Button>
-            </div>
-          ) : (
-            <Button variant="secondary" className="!px-3 !py-1.5 text-xs" onClick={startEdit}>
-              {t("profile.edit")}
-            </Button>
-          )}
-        </div>
-
-        {editing ? (
-          <div className="space-y-4">
-            <div>
-              <label className="mb-1.5 block text-xs text-text-muted">{t("auth.fullName")}</label>
-              <Input
-                value={form.full_name}
-                onChange={(e) => setForm((p) => ({ ...p, full_name: e.target.value }))}
-                required
-              />
-            </div>
-            <div>
-              <label className="mb-1.5 block text-xs text-text-muted">{t("profile.email")}</label>
-              <Input
-                type="email"
-                value={form.email}
-                onChange={(e) => setForm((p) => ({ ...p, email: e.target.value }))}
-                required
-              />
-            </div>
-            <div>
-              <label className="mb-1.5 block text-xs text-text-muted">{t("profile.phone")}</label>
-              <Input
-                type="tel"
-                value={form.phone}
-                onChange={(e) => setForm((p) => ({ ...p, phone: e.target.value }))}
-                placeholder={t("profile.phonePlaceholder")}
-              />
-            </div>
-            {form.avatar_url && (
-              <Button
-                type="button"
-                variant="ghost"
-                className="text-xs"
-                onClick={() => setForm((p) => ({ ...p, avatar_url: null }))}
-              >
-                {t("profile.removePhoto")}
-              </Button>
-            )}
-          </div>
-        ) : (
-          <dl className="space-y-3 text-sm">
-            {userId && (
-              <div className="flex justify-between gap-4 border-b border-border/60 pb-3">
-                <dt className="text-text-muted">{t("profile.userId")}</dt>
-                <dd className="truncate font-mono text-xs text-text-primary">{userId}</dd>
-              </div>
-            )}
-            <div className="flex justify-between gap-4 border-b border-border/60 pb-3">
-              <dt className="text-text-muted">{t("auth.fullName")}</dt>
-              <dd className="text-text-primary">{displayName}</dd>
-            </div>
-            <div className="flex justify-between gap-4 border-b border-border/60 pb-3">
-              <dt className="text-text-muted">{t("profile.email")}</dt>
-              <dd className="truncate text-text-primary">{displayEmail}</dd>
-            </div>
-            <div className="flex justify-between gap-4 border-b border-border/60 pb-3">
-              <dt className="text-text-muted">{t("profile.phone")}</dt>
-              <dd className="text-text-primary">{displayPhone || t("profile.noPhone")}</dd>
-            </div>
-            <div className="flex items-center justify-between gap-4">
-              <dt className="text-text-muted">{t("profile.plan")}</dt>
-              <dd className="flex items-center gap-2">
-                <span className="text-accent-primary">
-                  {t(
-                    subscriptionTier === "pro"
-                      ? "profile.pro"
-                      : subscriptionTier === "business"
-                        ? "profile.business"
-                        : "profile.free"
-                  )}
-                </span>
-                <Link
-                  href="/#pricing"
-                  className="text-xs text-text-secondary transition hover:text-accent-primary"
-                >
-                  {t("profile.upgradePlan")} →
-                </Link>
-              </dd>
-            </div>
-          </dl>
-        )}
-
-        {error && <p className="mt-4 text-sm text-error">{error}</p>}
-      </GlassCard>
 
       <GlassCard className="mt-6">
         <h2 className="mb-1 text-sm font-semibold uppercase tracking-wide text-text-secondary">

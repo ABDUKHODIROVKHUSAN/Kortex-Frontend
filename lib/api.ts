@@ -9,11 +9,13 @@ import type {
   ChatUsage,
   Document,
   DocumentChatStats,
+  RetrievalMeta,
   TokenData,
   UpgradeTierResponse,
   User,
 } from "@/types";
 import { API_URL, BACKEND_UNREACHABLE } from "@/lib/backend-health";
+import { loadRagSettings } from "@/lib/workspaceSettings";
 
 async function apiFetch<T>(
   path: string,
@@ -83,7 +85,7 @@ export async function getMe(token: string): Promise<ApiResponse<User>> {
 
 export async function upgradeTier(
   token: string,
-  tier: "pro" | "business"
+  tier: "free" | "pro" | "business"
 ): Promise<UpgradeTierResponse> {
   const res = await fetch(`${API_URL}/api/upgrade-tier`, {
     method: "POST",
@@ -138,15 +140,22 @@ export async function getDocument(
   return apiFetch<Document>(`/documents/${docId}`, {}, token);
 }
 
+export function getDocumentFileUrl(docId: string): string {
+  return `${API_URL}/documents/${docId}/file`;
+}
+
 export async function uploadDocument(
   token: string,
   file: File,
   onProgress?: (pct: number) => void
 ): Promise<ApiResponse<Document>> {
+  const rag = loadRagSettings();
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     const formData = new FormData();
     formData.append("file", file);
+    formData.append("chunk_size", String(rag.chunkSize));
+    formData.append("chunk_overlap", String(rag.chunkOverlap));
 
     xhr.upload.addEventListener("progress", (e) => {
       if (e.lengthComputable && onProgress) {
@@ -259,10 +268,18 @@ export async function streamChat(
   docId: string,
   query: string,
   onToken: (token: string) => void,
-  onDone: (sources: ChatMessage["sources"], usage?: ChatUsage) => void,
+  onDone: (
+    sources: ChatMessage["sources"],
+    usage?: ChatUsage,
+    retrieval?: RetrievalMeta | null
+  ) => void,
   onError: (msg: string) => void
 ): Promise<void> {
-  const url = `${API_URL}/chat/stream?doc_id=${encodeURIComponent(docId)}&query=${encodeURIComponent(query)}`;
+  const rag = loadRagSettings();
+  const url =
+    `${API_URL}/chat/stream?doc_id=${encodeURIComponent(docId)}` +
+    `&query=${encodeURIComponent(query)}` +
+    `&response_style=${encodeURIComponent(rag.responseStyle)}`;
 
   const res = await fetch(url, {
     headers: { Authorization: `Bearer ${token}` },
@@ -295,7 +312,9 @@ export async function streamChat(
       try {
         const payload = JSON.parse(line.slice(6));
         if (payload.type === "token") onToken(payload.content);
-        if (payload.type === "done") onDone(payload.sources, payload.usage);
+        if (payload.type === "done") {
+          onDone(payload.sources, payload.usage, payload.retrieval ?? null);
+        }
         if (payload.type === "error") onError(payload.message);
       } catch {
         /* ignore malformed chunks */

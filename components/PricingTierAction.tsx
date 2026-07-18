@@ -33,6 +33,7 @@ export default function PricingTierAction({
   const signedIn = !!session;
   const isFree = tier.id === "free";
   const isPaid = tier.id === "pro" || tier.id === "business";
+  const currentTier = (session?.user?.subscriptionTier || "free").toLowerCase();
 
   const baseClass =
     variant === "landing"
@@ -41,13 +42,46 @@ export default function PricingTierAction({
         : "landing-pricing-cta landing-pricing-cta-outline"
       : "site-header-signup inline-flex justify-center";
 
-  const handleFreeClick = () => {
-    router.push("/dashboard");
+  const handleFreeClick = async () => {
+    if (!signedIn) {
+      router.push("/register");
+      return;
+    }
+
+    // Already on Free → open workspace
+    if (currentTier === "free") {
+      router.push("/dashboard");
+      return;
+    }
+
+    // Pro/Business → switch back to Free
+    if (!session?.accessToken) return;
+    setUpgrading(true);
+    try {
+      const res = await upgradeTier(session.accessToken, "free");
+      if (!res.success) {
+        throw new Error(res.message || t("pricing.upgradeFailed"));
+      }
+      await update({ subscriptionTier: res.userTier });
+      showToast(t("pricing.switchToFreeSuccess"), "success");
+      setTimeout(() => router.push("/dashboard"), 1500);
+    } catch (err) {
+      showToast(
+        err instanceof Error ? err.message : t("pricing.upgradeFailed"),
+        "error"
+      );
+    } finally {
+      setUpgrading(false);
+    }
   };
 
   const handleUpgradeClick = () => {
     if (!signedIn) {
       setSignUpOpen(true);
+      return;
+    }
+    if (currentTier === tier.id) {
+      showToast(t("pricing.alreadyOnPlan", { plan: tier.name }), "success");
       return;
     }
     setPaymentOpen(true);
@@ -81,8 +115,13 @@ export default function PricingTierAction({
   if (isFree) {
     if (signedIn) {
       return (
-        <button type="button" className={`${baseClass} ${className}`} onClick={handleFreeClick}>
-          {tier.cta}
+        <button
+          type="button"
+          className={`${baseClass} ${className}`}
+          onClick={handleFreeClick}
+          disabled={upgrading}
+        >
+          {upgrading ? t("pricing.switching") : tier.cta}
         </button>
       );
     }

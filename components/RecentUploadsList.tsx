@@ -2,6 +2,7 @@
 
 import { Badge, Spinner } from "@/components/ui";
 import { FileTypeIcon } from "@/components/FileTypeIcons";
+import IndexingProgress from "@/components/IndexingProgress";
 import { useTranslation } from "@/lib/i18n/context";
 import type { Document } from "@/types";
 
@@ -70,8 +71,8 @@ export default function RecentUploadsList({ items }: { items: RecentUploadItem[]
               </div>
             </div>
 
-            <div className="flex shrink-0 flex-col items-end gap-2 sm:min-w-[140px]">
-              <div className="flex items-center gap-2">
+            <div className="flex w-full shrink-0 flex-col items-stretch gap-2 sm:w-52 sm:items-end">
+              <div className="flex items-center justify-end gap-2">
                 <Badge color="default">{item.file_type.toUpperCase()}</Badge>
                 <Badge color={statusColor(item.status)}>
                   {item.isUploading
@@ -81,24 +82,27 @@ export default function RecentUploadsList({ items }: { items: RecentUploadItem[]
               </div>
 
               {item.isUploading && item.uploadProgress != null && (
-                <div className="w-full sm:w-36">
-                  <div className="h-1.5 overflow-hidden rounded-full bg-bg-tertiary">
+                <div className="w-full">
+                  <div className="flex items-center gap-2 text-xs text-text-secondary">
+                    <Spinner className="h-3.5 w-3.5 shrink-0" />
+                    <span className="min-w-0 flex-1 truncate font-medium">
+                      {t("upload.statusUploading")}
+                    </span>
+                    <span className="shrink-0 tabular-nums text-text-muted">
+                      {item.uploadProgress}%
+                    </span>
+                  </div>
+                  <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-bg-tertiary">
                     <div
-                      className="h-full rounded-full bg-gradient-to-r from-accent-primary to-accent-secondary transition-all"
+                      className="indexing-progress-bar h-full rounded-full bg-gradient-to-r from-accent-primary to-accent-secondary"
                       style={{ width: `${item.uploadProgress}%` }}
                     />
                   </div>
-                  <p className="mt-1 text-right text-[10px] text-text-muted">
-                    {item.uploadProgress}%
-                  </p>
                 </div>
               )}
 
               {item.status === "processing" && !item.isUploading && (
-                <div className="flex items-center gap-2 text-xs text-text-secondary">
-                  <Spinner className="h-3.5 w-3.5" />
-                  <span className="animate-pulse">{t("upload.statusProcessing")}</span>
-                </div>
+                <IndexingProgress document={item} compact />
               )}
             </div>
           </li>

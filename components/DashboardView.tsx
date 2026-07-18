@@ -6,12 +6,13 @@ import { useSession } from "next-auth/react";
 import DocumentCard from "@/components/DocumentCard";
 import DocumentsEmptyState from "@/components/DocumentsEmptyState";
 import { Button, Input } from "@/components/ui";
-import { getChatStats } from "@/lib/api";
+import { getChatStats, getDocument } from "@/lib/api";
 import { useDebouncedValue } from "@/lib/useDebouncedValue";
 import { useTranslation } from "@/lib/i18n/context";
 import type { Document, DocumentChatStats } from "@/types";
 
 type StatusFilter = "all" | "ready" | "processing" | "error";
+type SortMode = "latest" | "oldest" | "biggest";
 
 export default function DashboardView({
   initialDocuments,
@@ -26,6 +27,7 @@ export default function DashboardView({
   );
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  const [sortMode, setSortMode] = useState<SortMode>("latest");
   const debouncedSearch = useDebouncedValue(search, 300);
 
   useEffect(() => {
@@ -41,14 +43,58 @@ export default function DashboardView({
       .catch(() => {});
   }, [session?.accessToken, documents.length]);
 
+  const processingIdsKey = useMemo(
+    () =>
+      documents
+        .filter((d) => d.status === "processing")
+        .map((d) => d.id)
+        .sort()
+        .join(","),
+    [documents]
+  );
+
+  useEffect(() => {
+    if (!session?.accessToken || !processingIdsKey) return;
+    const ids = processingIdsKey.split(",");
+
+    const interval = setInterval(async () => {
+      const updated = await Promise.all(
+        ids.map((id) =>
+          getDocument(session.accessToken!, id)
+            .then((res) => res.data)
+            .catch(() => null)
+        )
+      );
+      setDocuments((prev) =>
+        prev.map((doc) => {
+          const next = updated.find((u) => u && u.id === doc.id);
+          return next ?? doc;
+        })
+      );
+    }, 1500);
+
+    return () => clearInterval(interval);
+  }, [session?.accessToken, processingIdsKey]);
+
   const filtered = useMemo(() => {
     const q = debouncedSearch.trim().toLowerCase();
-    return documents.filter((doc) => {
+    const list = documents.filter((doc) => {
       if (statusFilter !== "all" && doc.status !== statusFilter) return false;
       if (q && !doc.original_name.toLowerCase().includes(q)) return false;
       return true;
     });
-  }, [documents, debouncedSearch, statusFilter]);
+
+    return [...list].sort((a, b) => {
+      if (sortMode === "oldest") {
+        return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+      }
+      if (sortMode === "biggest") {
+        return (b.file_size || 0) - (a.file_size || 0);
+      }
+      // latest (default)
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    });
+  }, [documents, debouncedSearch, statusFilter, sortMode]);
 
   const countLabel =
     documents.length === 1
@@ -77,7 +123,7 @@ export default function DashboardView({
         <DocumentsEmptyState />
       ) : (
         <>
-          <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center">
+          <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
             <Input
               type="search"
               value={search}
@@ -89,11 +135,22 @@ export default function DashboardView({
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}
               className="themed-input rounded-lg px-3 py-3 text-sm sm:max-w-[180px]"
+              aria-label={t("dashboard.filterAll")}
             >
               <option value="all">{t("dashboard.filterAll")}</option>
               <option value="ready">{t("dashboard.filterReady")}</option>
               <option value="processing">{t("dashboard.filterProcessing")}</option>
               <option value="error">{t("dashboard.filterFailed")}</option>
+            </select>
+            <select
+              value={sortMode}
+              onChange={(e) => setSortMode(e.target.value as SortMode)}
+              className="themed-input rounded-lg px-3 py-3 text-sm sm:max-w-[180px]"
+              aria-label={t("dashboard.sortLabel")}
+            >
+              <option value="latest">{t("dashboard.sortLatest")}</option>
+              <option value="oldest">{t("dashboard.sortOldest")}</option>
+              <option value="biggest">{t("dashboard.sortBiggest")}</option>
             </select>
           </div>
 
@@ -102,13 +159,7 @@ export default function DashboardView({
               {t("dashboard.noResults")}
             </p>
           ) : (
-            <div
-              className={
-                filtered.length > 2
-                  ? "grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
-                  : "mx-auto grid max-w-xl grid-cols-1 gap-4"
-              }
-            >
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {filtered.map((doc) => (
                 <div key={doc.id} className="min-w-0 overflow-visible">
                   <DocumentCard

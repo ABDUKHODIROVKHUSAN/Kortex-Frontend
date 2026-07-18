@@ -18,7 +18,7 @@ export default async function ChatPage({
     <div className="chat-page flex min-h-0 flex-1 flex-col overflow-hidden lg:flex-row">
       <ChatSidebar doc={doc} />
       <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-        <ChatWindow docId={docId} />
+        <ChatWindow docId={docId} document={doc} />
       </div>
     </div>
   );

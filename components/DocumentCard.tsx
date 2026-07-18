@@ -8,6 +8,7 @@ import { deleteDocument, renameDocument } from "@/lib/api";
 import { formatRelativeTime } from "@/lib/formatRelativeTime";
 import { Badge, GlassCard, Button } from "@/components/ui";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import IndexingProgress from "@/components/IndexingProgress";
 import RenameDocumentDialog from "@/components/RenameDocumentDialog";
 import { useTranslation } from "@/lib/i18n/context";
 
@@ -181,7 +182,11 @@ export default function DocumentCard({
           </p>
         )}
 
-        {activityStat ? (
+        {document.status === "processing" ? (
+          <div className="mb-4">
+            <IndexingProgress document={document} />
+          </div>
+        ) : activityStat ? (
           <p className="mb-4 text-xs text-text-secondary">{activityStat}</p>
         ) : document.status === "ready" ? (
           <p className="mb-4 text-xs text-text-muted">{t("dashboard.noQuestionsYet")}</p>

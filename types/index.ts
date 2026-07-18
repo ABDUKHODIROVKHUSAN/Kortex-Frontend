@@ -68,6 +68,15 @@ export interface AdminFailureItem {
   created_at: string | null;
 }
 
+export type IndexingStage =
+  | "queued"
+  | "extracting"
+  | "chunking"
+  | "embedding"
+  | "storing"
+  | "ready"
+  | "error";
+
 export interface Document {
   id: string;
   user_id: string;
@@ -77,6 +86,10 @@ export interface Document {
   file_size: number;
   status: "processing" | "ready" | "error";
   chunk_count: number;
+  progress_percent?: number;
+  progress_stage?: IndexingStage | string;
+  chunk_size?: number;
+  chunk_overlap?: number;
   created_at: string;
 }
 
@@ -85,6 +98,15 @@ export interface SourceChunk {
   page?: number;
   paragraph_index?: number;
   chunk_index?: number;
+  score?: number | null;
+  retrieval_method?: string;
+}
+
+export interface RetrievalMeta {
+  method: string;
+  top_k: number;
+  chunk_count: number;
+  latency_ms: number;
 }
 
 export interface ChatMessage {

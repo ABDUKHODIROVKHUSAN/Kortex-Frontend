@@ -1,14 +1,18 @@
 "use client";
 
-import type { ChatMessage } from "@/types";
+import type { ChatMessage, RetrievalMeta, SourceChunk } from "@/types";
 import SourceCitation from "@/components/SourceCitation";
 import ChatMessageContent from "@/components/ChatMessageContent";
 import { KortexIcon } from "@/components/KortexIcon";
 import { useTranslation } from "@/lib/i18n/context";
+import { loadRagSettings } from "@/lib/workspaceSettings";
 
 export default function MessageBubble({
   message,
   isStreaming,
+  retrieval,
+  onOpenSource,
+  showSources,
 }: {
   message:
     | ChatMessage
@@ -18,9 +22,14 @@ export default function MessageBubble({
         sources?: ChatMessage["sources"];
       };
   isStreaming?: boolean;
+  retrieval?: RetrievalMeta | null;
+  onOpenSource?: (source: SourceChunk) => void;
+  showSources?: boolean;
 }) {
   const { t } = useTranslation();
   const isUser = message.role === "user";
+  const excerptsEnabled =
+    showSources ?? (typeof window !== "undefined" ? loadRagSettings().showSourceExcerpts : true);
 
   return (
     <div className={`chat-message-row flex w-full ${isUser ? "justify-end" : "justify-start"}`}>
@@ -37,6 +46,15 @@ export default function MessageBubble({
             <span className="text-xs font-semibold tracking-wide text-text-secondary">
               {t("brand")}
             </span>
+            {retrieval && (
+              <span className="ml-auto rounded-md bg-accent-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-accent-primary">
+                {t("chat.retrievalBadge", {
+                  method: retrieval.method,
+                  ms: retrieval.latency_ms,
+                  count: retrieval.chunk_count,
+                })}
+              </span>
+            )}
           </div>
         )}
         {isUser && (
@@ -52,8 +70,8 @@ export default function MessageBubble({
             <span className="h-2 w-2 animate-bounce rounded-full bg-accent-primary [animation-delay:300ms]" />
           </div>
         )}
-        {!isUser && message.sources && (
-          <SourceCitation sources={message.sources} />
+        {!isUser && excerptsEnabled && message.sources && (
+          <SourceCitation sources={message.sources} onOpenSource={onOpenSource} />
         )}
       </div>
     </div>

@@ -3,11 +3,14 @@ import type { ReactNode } from "react";
 interface GlassCardProps {
   children: ReactNode;
   className?: string;
+  style?: React.CSSProperties;
 }
 
-export function GlassCard({ children, className = "" }: GlassCardProps) {
+export function GlassCard({ children, className = "", style }: GlassCardProps) {
   return (
-    <div className={`glass-card p-6 ${className}`}>{children}</div>
+    <div className={`glass-card p-6 ${className}`} style={style}>
+      {children}
+    </div>
   );
 }
 

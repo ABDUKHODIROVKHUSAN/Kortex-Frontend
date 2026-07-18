@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import { useSession } from "next-auth/react";
 import { GridBackground } from "@/components/GridBackground";
 import SiteHeader from "@/components/SiteHeader";
@@ -11,6 +11,7 @@ import LandingFAQ from "@/components/LandingFAQ";
 import PricingTierAction from "@/components/PricingTierAction";
 import ScrollToTop from "@/components/ScrollToTop";
 import LandingAnalytics from "@/components/LandingAnalytics";
+import DocsIllustration from "@/components/DocsIllustration";
 import { GlassCard } from "@/components/ui";
 import {
   getPricingTiers,
@@ -206,7 +207,6 @@ export default function LandingPage() {
   ];
 
   const pricingTiers = getPricingTiers(t, session, billing);
-  const featuresCtaHref = session ? "/dashboard" : "/register";
   const ctaHref = session ? "/dashboard" : "/register";
 
   return (
@@ -247,11 +247,6 @@ export default function LandingPage() {
             {features.map((item) => (
               <LandingFeatureCard key={item.step} {...item} />
             ))}
-          </div>
-          <div className="mt-8 flex justify-center md:mt-12">
-            <Link href={featuresCtaHref} className="site-header-signup !rounded-lg !px-8 !py-3">
-              {t("landing.featuresCta")}
-            </Link>
           </div>
         </div>
       </section>
@@ -307,38 +302,57 @@ export default function LandingPage() {
       </div>
 
       <section id="docs" className="landing-band scroll-mt-24">
-        <div className="mx-auto max-w-3xl px-6 py-10 md:py-24">
+        <div className="mx-auto max-w-6xl px-6 py-10 md:py-24">
           <h2 className="landing-section-title mb-2 md:mb-4">
             {t("landing.docsTitle")}
           </h2>
-          <p className="mx-auto mb-6 max-w-2xl text-center text-sm text-text-secondary md:mb-14 md:text-base">
+          <p className="mx-auto mb-8 max-w-2xl text-center text-sm text-text-secondary md:mb-12 md:text-base">
             {t("landing.docsSubtitle")}
           </p>
-          {/* Compact teaser on mobile; full cards on desktop */}
-          <div className="md:hidden">
-            <GlassCard className="!p-5 text-center">
-              <p className="text-sm leading-relaxed text-text-secondary">
-                {t("landing.docsMobileTeaser")}
-              </p>
-              <Link
-                href="/docs"
-                className="mt-4 inline-flex font-semibold text-accent-primary hover:underline"
-              >
-                {t("landing.viewDocs")}
-              </Link>
-            </GlassCard>
+
+          <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-14">
+            <div className="order-2 flex justify-center lg:order-1">
+              <DocsIllustration />
+            </div>
+
+            <div className="order-1 space-y-4 lg:order-2">
+              {/* Compact teaser on small phones; full cards from sm up */}
+              <div className="sm:hidden">
+                <GlassCard className="!p-5 text-center">
+                  <p className="text-sm leading-relaxed text-text-secondary">
+                    {t("landing.docsMobileTeaser")}
+                  </p>
+                </GlassCard>
+              </div>
+              <div className="hidden space-y-4 sm:block">
+                {docsSections.map((section, index) => (
+                  <GlassCard
+                    key={section.title}
+                    className="docs-guide-card"
+                    style={
+                      {
+                        "--docs-card-delay": `${index * 0.08}s`,
+                      } as CSSProperties
+                    }
+                  >
+                    <div className="flex items-start gap-3">
+                      <span className="docs-guide-step">{String(index + 1).padStart(2, "0")}</span>
+                      <div>
+                        <h3 className="text-lg font-bold text-accent-primary">
+                          {section.title}
+                        </h3>
+                        <p className="mt-2 text-sm leading-relaxed text-text-secondary">
+                          {section.body}
+                        </p>
+                      </div>
+                    </div>
+                  </GlassCard>
+                ))}
+              </div>
+            </div>
           </div>
-          <div className="hidden space-y-4 md:block">
-            {docsSections.map((section) => (
-              <GlassCard key={section.title}>
-                <h3 className="text-lg font-bold text-accent-primary">{section.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-text-secondary">
-                  {section.body}
-                </p>
-              </GlassCard>
-            ))}
-          </div>
-          <p className="mt-6 text-center text-sm text-text-muted md:mt-8">
+
+          <p className="mt-8 text-center text-sm text-text-muted md:mt-10">
             {t("docs.needHelp")}{" "}
             <Link
               href={session ? "/dashboard" : "/register"}

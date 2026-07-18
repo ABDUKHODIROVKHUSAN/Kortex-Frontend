@@ -3,27 +3,62 @@
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
-import type { ChatMessage, SourceChunk } from "@/types";
+import type { ChatMessage, Document, RetrievalMeta, SourceChunk } from "@/types";
 import { getChatHistory, streamChat, clearChatHistory, getChatUsage } from "@/lib/api";
 import MessageBubble from "@/components/MessageBubble";
 import ChatUsageBar from "@/components/ChatUsageBar";
+import PdfCitationViewer, {
+  type PdfCitationTarget,
+} from "@/components/PdfCitationViewer";
 import { Button, Spinner } from "@/components/ui";
 import { useTranslation } from "@/lib/i18n/context";
 import type { ChatUsage } from "@/types";
+import { loadRagSettings } from "@/lib/workspaceSettings";
 
-export default function ChatWindow({ docId }: { docId: string }) {
+const DEMO_QUESTIONS_KO = [
+  "하이브리드 검색이 왜 필요한가?",
+  "Kortex RAG 파이프라인 단계를 말해줘",
+  "DEMO-HYBRID-RRF 토큰이 뭐야?",
+];
+
+const DEMO_QUESTIONS_EN = [
+  "Why is hybrid search needed?",
+  "List the Kortex RAG pipeline steps",
+  "What is the DEMO-HYBRID-RRF token?",
+];
+
+export default function ChatWindow({
+  docId,
+  document,
+}: {
+  docId: string;
+  document?: Document | null;
+}) {
   const { data: session } = useSession();
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(true);
   const [streaming, setStreaming] = useState(false);
   const [streamContent, setStreamContent] = useState("");
   const [streamSources, setStreamSources] = useState<SourceChunk[]>([]);
+  const [streamRetrieval, setStreamRetrieval] = useState<RetrievalMeta | null>(null);
+  const [lastRetrieval, setLastRetrieval] = useState<RetrievalMeta | null>(null);
   const [streamError, setStreamError] = useState("");
   const [usage, setUsage] = useState<ChatUsage | null>(null);
   const [compactPlaceholder, setCompactPlaceholder] = useState(false);
+  const [pdfTarget, setPdfTarget] = useState<PdfCitationTarget | null>(null);
+  const [showExcerpts, setShowExcerpts] = useState(true);
   const bottomRef = useRef<HTMLDivElement>(null);
+
+  const demoQuestions = locale === "ko" ? DEMO_QUESTIONS_KO : DEMO_QUESTIONS_EN;
+  const isDemoDoc =
+    document?.original_name?.toLowerCase().includes("kortex-sample") ||
+    document?.original_name?.includes("데모");
+
+  useEffect(() => {
+    setShowExcerpts(loadRagSettings().showSourceExcerpts);
+  }, []);
 
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 639px)");
@@ -58,14 +93,24 @@ export default function ChatWindow({ docId }: { docId: string }) {
     scrollToBottom();
   }, [messages, streamContent, scrollToBottom]);
 
-  const sendMessage = async () => {
-    if (!input.trim() || !session?.accessToken || streaming) return;
+  const openSource = (source: SourceChunk) => {
+    if (!document) return;
+    setPdfTarget({
+      docId,
+      fileType: document.file_type,
+      source,
+    });
+  };
 
-    const query = input.trim();
+  const sendMessage = async (preset?: string) => {
+    const query = (preset ?? input).trim();
+    if (!query || !session?.accessToken || streaming) return;
+
     setInput("");
     setStreaming(true);
     setStreamContent("");
     setStreamSources([]);
+    setStreamRetrieval(null);
     setStreamError("");
 
     const userMsg: ChatMessage = {
@@ -87,8 +132,10 @@ export default function ChatWindow({ docId }: { docId: string }) {
         accumulated += token;
         setStreamContent(accumulated);
       },
-      (sources, nextUsage) => {
+      (sources, nextUsage, retrieval) => {
         setStreamSources(sources || []);
+        setStreamRetrieval(retrieval ?? null);
+        setLastRetrieval(retrieval ?? null);
         if (nextUsage) setUsage(nextUsage);
         const assistantMsg: ChatMessage = {
           id: `temp-a-${Date.now()}`,
@@ -115,6 +162,7 @@ export default function ChatWindow({ docId }: { docId: string }) {
     await clearChatHistory(session.accessToken, docId);
     setMessages([]);
     setStreamError("");
+    setLastRetrieval(null);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -151,12 +199,36 @@ export default function ChatWindow({ docId }: { docId: string }) {
       </div>
       <div className="chat-messages-area min-h-0 flex-1 space-y-4 overflow-y-auto px-3 py-4 sm:space-y-5 sm:px-6 sm:py-5">
         {messages.length === 0 && !streaming && (
-          <p className="text-center text-text-secondary">
-            {t("chat.emptyPrompt")}
-          </p>
+          <div className="mx-auto max-w-lg text-center">
+            <p className="text-text-secondary">{t("chat.emptyPrompt")}</p>
+            {(isDemoDoc || locale === "ko") && (
+              <div className="mt-4 flex flex-wrap justify-center gap-2">
+                {demoQuestions.map((q) => (
+                  <button
+                    key={q}
+                    type="button"
+                    onClick={() => sendMessage(q)}
+                    className="rounded-full border border-border bg-bg-secondary px-3 py-1.5 text-left text-xs text-text-secondary transition hover:border-accent-primary/40 hover:text-accent-primary"
+                  >
+                    {q}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         )}
-        {messages.map((msg) => (
-          <MessageBubble key={msg.id} message={msg} />
+        {messages.map((msg, idx) => (
+          <MessageBubble
+            key={msg.id}
+            message={msg}
+            showSources={showExcerpts}
+            onOpenSource={document ? openSource : undefined}
+            retrieval={
+              msg.role === "assistant" && idx === messages.length - 1
+                ? lastRetrieval
+                : undefined
+            }
+          />
         ))}
         {streaming && (
           <MessageBubble
@@ -166,6 +238,9 @@ export default function ChatWindow({ docId }: { docId: string }) {
               sources: streamSources.length ? streamSources : undefined,
             }}
             isStreaming={!streamContent}
+            showSources={showExcerpts}
+            retrieval={streamRetrieval}
+            onOpenSource={document ? openSource : undefined}
           />
         )}
         <div ref={bottomRef} />
@@ -198,7 +273,7 @@ export default function ChatWindow({ docId }: { docId: string }) {
             className="chat-input min-w-0 flex-1 resize-none rounded-xl px-3 py-2.5 text-sm outline-none transition focus:border-accent-primary/40 focus:ring-1 focus:ring-accent-primary/20 sm:px-4 sm:py-3"
           />
           <Button
-            onClick={sendMessage}
+            onClick={() => sendMessage()}
             disabled={streaming || !input.trim() || (usage?.requests_remaining ?? 1) <= 0}
             className="btn-primary shrink-0 self-end !px-3 !py-2.5 sm:!px-4"
           >
@@ -206,6 +281,8 @@ export default function ChatWindow({ docId }: { docId: string }) {
           </Button>
         </div>
       </div>
+
+      <PdfCitationViewer target={pdfTarget} onClose={() => setPdfTarget(null)} />
     </div>
   );
 }

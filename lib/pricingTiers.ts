@@ -48,6 +48,9 @@ export function getPricingTiers(
   billing: BillingPeriod = "monthly"
 ): PricingTier[] {
   const signedIn = !!session;
+  const currentTier = (
+    session?.user?.subscriptionTier || "free"
+  ).toLowerCase() as PricingTierId;
 
   const freeMonthly = 0;
   const proMonthly = 11.99;
@@ -158,7 +161,11 @@ export function getPricingTiers(
       desc: t("pricing.freeDesc"),
       featureGroups: freeGroups,
       features: includedLabels(freeGroups),
-      cta: signedIn ? t("pricing.ctaOpenWorkspace") : t("pricing.ctaGetStarted"),
+      cta: !signedIn
+        ? t("pricing.ctaGetStarted")
+        : currentTier === "free"
+          ? t("pricing.ctaFreeUserGetStarted")
+          : t("pricing.ctaSwitchToFree"),
       href: signedIn ? "/dashboard" : "/register",
       highlight: false,
       disabled: false,
@@ -173,7 +180,7 @@ export function getPricingTiers(
       desc: t("pricing.proDesc"),
       featureGroups: proGroups,
       features: includedLabels(proGroups),
-      cta: t("pricing.ctaGetStarted"),
+      cta: t("pricing.ctaPurchase"),
       href: "#",
       highlight: true,
       disabled: false,
@@ -188,7 +195,7 @@ export function getPricingTiers(
       desc: t("pricing.businessDesc"),
       featureGroups: businessGroups,
       features: includedLabels(businessGroups),
-      cta: t("pricing.ctaContactSales"),
+      cta: t("pricing.ctaPurchase"),
       href: "#",
       highlight: false,
       disabled: false,

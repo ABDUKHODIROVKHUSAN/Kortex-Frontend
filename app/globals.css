@@ -1146,6 +1146,286 @@ html[lang="ko"] .landing-hero-line2 {
   box-shadow: var(--shadow-elevated-lg);
 }
 
+.indexing-progress-bar {
+  transition: width 0.35s ease-out;
+  background-size: 200% 100%;
+  animation: indexing-bar-shine 1.6s linear infinite;
+}
+
+/* Documentation section illustration */
+.docs-illustration {
+  position: relative;
+  width: min(100%, 340px);
+  height: 300px;
+  margin-inline: auto;
+}
+
+.docs-illustration-glow {
+  position: absolute;
+  inset: 18% 10%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(99, 102, 241, 0.22) 0%,
+    rgba(99, 102, 241, 0.06) 45%,
+    transparent 70%
+  );
+  filter: blur(8px);
+  animation: docs-glow-pulse 4s ease-in-out infinite;
+}
+
+.docs-card {
+  position: absolute;
+  left: 50%;
+  width: 200px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: #ffffff;
+  box-shadow: var(--shadow-elevated-lg);
+  padding: 1rem 1.1rem;
+  transform-origin: center center;
+}
+
+.docs-card-back {
+  top: 42px;
+  height: 210px;
+  opacity: 0.55;
+  transform: translateX(-50%) rotate(-12deg) translateX(-28px);
+  animation: docs-float-back 5.5s ease-in-out infinite;
+}
+
+.docs-card-mid {
+  top: 28px;
+  height: 220px;
+  opacity: 0.85;
+  transform: translateX(-50%) rotate(8deg) translateX(34px);
+  animation: docs-float-mid 4.8s ease-in-out infinite;
+}
+
+.docs-card-front {
+  top: 18px;
+  height: 236px;
+  z-index: 2;
+  transform: translateX(-50%) rotate(-2deg);
+  animation: docs-float-front 4.2s ease-in-out infinite;
+  border-color: rgba(99, 102, 241, 0.28);
+  box-shadow:
+    0 12px 36px rgba(99, 102, 241, 0.16),
+    var(--card-shadow);
+}
+
+.docs-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 0.85rem;
+}
+
+.docs-card-dot {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 9999px;
+  background: #6366f1;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+}
+
+.docs-card-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.docs-card-badge {
+  display: inline-flex;
+  margin-bottom: 0.75rem;
+  border-radius: 9999px;
+  background: rgba(99, 102, 241, 0.1);
+  color: #4f46e5;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 0.2rem 0.5rem;
+}
+
+.docs-card-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.docs-card-lines span {
+  display: block;
+  height: 0.42rem;
+  border-radius: 9999px;
+  background: #e5e7eb;
+}
+
+.docs-card-lines span.short {
+  width: 58%;
+}
+
+.docs-card-lines span.accent {
+  background: linear-gradient(90deg, #6366f1, #a5b4fc);
+  width: 72%;
+}
+
+.docs-card-cite {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 1rem;
+}
+
+.docs-cite-chip {
+  display: inline-flex;
+  border-radius: 6px;
+  background: rgba(99, 102, 241, 0.12);
+  color: #4f46e5;
+  font-family: var(--font-jetbrains), monospace;
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 0.2rem 0.4rem;
+  animation: docs-chip-pulse 2.8s ease-in-out infinite;
+}
+
+.docs-cite-chip:nth-child(2) {
+  animation-delay: 0.4s;
+}
+
+.docs-float {
+  position: absolute;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 9999px;
+  font-weight: 700;
+  box-shadow: var(--shadow-elevated);
+}
+
+.docs-float-q {
+  top: 8px;
+  right: 18px;
+  background: #ffffff;
+  color: #6366f1;
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  animation: docs-bob 3.2s ease-in-out infinite;
+}
+
+.docs-float-check {
+  bottom: 22px;
+  left: 22px;
+  background: #6366f1;
+  color: #ffffff;
+  animation: docs-bob 3.6s ease-in-out infinite reverse;
+}
+
+.docs-guide-step {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  height: 2rem;
+  border-radius: 0.65rem;
+  background: rgba(99, 102, 241, 0.1);
+  color: #4f46e5;
+  font-family: var(--font-jetbrains), monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.docs-guide-card {
+  animation: docs-card-in 0.55s ease both;
+  animation-delay: var(--docs-card-delay, 0s);
+}
+
+@keyframes docs-float-front {
+  0%,
+  100% {
+    transform: translateX(-50%) rotate(-2deg) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) rotate(-1deg) translateY(-8px);
+  }
+}
+
+@keyframes docs-float-mid {
+  0%,
+  100% {
+    transform: translateX(-50%) rotate(8deg) translateX(34px) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) rotate(10deg) translateX(34px) translateY(-10px);
+  }
+}
+
+@keyframes docs-float-back {
+  0%,
+  100% {
+    transform: translateX(-50%) rotate(-12deg) translateX(-28px) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) rotate(-14deg) translateX(-28px) translateY(-6px);
+  }
+}
+
+@keyframes docs-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-7px);
+  }
+}
+
+@keyframes docs-glow-pulse {
+  0%,
+  100% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes docs-chip-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.04);
+  }
+}
+
+@keyframes docs-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes indexing-bar-shine {
+  0% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.15);
+  }
+  100% {
+    filter: brightness(1);
+  }
+}
+
 .chat-composer {
   border-top: 1px solid var(--border);
   background: rgba(255, 255, 255, 0.95);
@@ -1437,6 +1717,19 @@ html[lang="ko"] .landing-hero-line2 {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--accent-secondary);
+}
+
+/* PDF citation viewer highlights */
+.pdf-cite-wrap mark.pdf-cite-mark,
+.pdf-cite-page mark {
+  background: rgba(250, 204, 21, 0.45);
+  color: inherit;
+  border-radius: 2px;
+  padding: 0 1px;
+}
+
+.pdf-cite-page .react-pdf__Page__textContent span {
+  opacity: 1;
 }
 
 /* Mobile-only layout compaction */
